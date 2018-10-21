@@ -19,7 +19,7 @@
          (.credentialsProvider (creds name))))))
 
 (defn abort-multipart-upload
-  [& {:keys                                                 ;;TODO add request payer
+  [& {:keys
       [^String bucket
        ^String key
        ^String upload-id
