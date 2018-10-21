@@ -28,15 +28,15 @@
       :or
       {profile         "default"
        requester-payer "requester"}}]
-  (->>
+  (.abortMultipartUpload
+    (client profile)
     (.build
       (->
         (AbortMultipartUploadRequest/builder)
         (.bucket bucket)
         (.key key)
         (.uploadId upload-id)
-        (.requestPayer requester-payer)))
-    (.abortMultipartUpload (client profile))))
+        (.requestPayer requester-payer)))))
 
 (defn complete-multipart-upload
   [& {:keys
@@ -48,14 +48,14 @@
       :or
       {profile       "default"
        request-payer "requester"}}]
-  (->>
+  (.completeMultipartUpload
+    (client profile)
     (.build
       (->
         (CompleteMultipartUploadRequest/builder)
         (.bucket bucket)
         (.key key)
         (.uploadId upload-id)
-        (.requestPayer request-payer)))
-    (.completeMultipartUpload (client profile))))
+        (.requestPayer request-payer)))))
 
 
