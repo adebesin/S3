@@ -1,8 +1,7 @@
 (ns s3.core
   (:import (software.amazon.awssdk.services.s3 S3AsyncClient)
            (software.amazon.awssdk.services.s3.model AbortMultipartUploadRequest ListMultipartUploadsRequest RequestPayer)
-           (software.amazon.awssdk.regions Region)
-           (software.amazon.awssdk.auth.credentials ProfileCredentialsProvider)))
+           (software.amazon.awssdk.auth.credentials ProfileCredentialsProvider AwsCredentials AwsCredentialsProvider)))
 
 (defn credentials-provider
   [^String name]
@@ -14,21 +13,19 @@
   ([]
    (.build
      (S3AsyncClient/builder)))
-  ([^Region region]
+  ([^String name]
    (.build
      (-> (S3AsyncClient/builder)
-         (.region region))))
-  ([^Region region
-    ^String name]
-   (.build
-     (-> (S3AsyncClient/builder)
-         (.region region)
          (.credentialsProvider (credentials-provider name))))))
 
 (defn abort-multipart-upload
   [& {:keys                                                 ;;TODO add request payer
       [^String bucket
-       ^String key upload-id]}]
+       ^String key
+       upload-id
+       ^String profile]
+      :or
+      {profile "default"}}]
   (->>
     (.build
       (->
@@ -36,5 +33,5 @@
         (.bucket bucket)
         (.key key)
         (.uploadId upload-id)))
-    (.abortMultipartUpload (async-client))))
+    (.abortMultipartUpload (async-client profile))))
 
