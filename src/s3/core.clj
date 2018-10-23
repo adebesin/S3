@@ -1,7 +1,12 @@
 (ns s3.core
   (:import (software.amazon.awssdk.services.s3 S3AsyncClient)
-           (software.amazon.awssdk.services.s3.model AbortMultipartUploadRequest ListMultipartUploadsRequest RequestPayer ListObjectsV2Request CompleteMultipartUploadRequest)
-           (software.amazon.awssdk.auth.credentials ProfileCredentialsProvider AwsCredentials AwsCredentialsProvider)))
+           (software.amazon.awssdk.services.s3.model
+             AbortMultipartUploadRequest
+             CompleteMultipartUploadRequest
+             CopyObjectRequest)
+           (software.amazon.awssdk.auth.credentials
+             ProfileCredentialsProvider
+             )))
 
 (defn- creds
   [^String name]
@@ -26,8 +31,8 @@
        ^String requester-payer
        ^String profile]
       :or
-      {profile         "default"
-       requester-payer "requester"}}]
+      {requester-payer "requester"
+       profile         "default"}}]
   (.abortMultipartUpload
     (client profile)
     (.build
@@ -46,8 +51,8 @@
        ^String request-payer
        ^String profile]
       :or
-      {profile       "default"
-       request-payer "requester"}}]
+      {request-payer "requester"
+       profile       "default"}}]
   (.completeMultipartUpload
     (client profile)
     (.build
@@ -58,4 +63,41 @@
         (.uploadId upload-id)
         (.requestPayer request-payer)))))
 
+(defn copy-source
+  [& {:keys
+          [^String copy-source
+           ^String bucket
+           ^String key
+           ^String request-payer
+           ^String profile]
+      :or {request-payer "requester"
+           profile "default"}}]
+  (.copyObject
+    (client profile)
+    (.build
+      (->
+        (CopyObjectRequest/builder)
+        (.copySource copy-source)
+        (.key key)
+        (.bucket bucket)
+        (.requestPayer request-payer)))))
+
+(defn copy-source-if-match
+  [& {:keys
+          [^String copy-source
+           ^String bucket
+           ^String key
+           ^String request-payer
+           ^String profile]
+      :or {request-payer "requester"
+           profile "default"}}]
+  (.copyObject
+    (client profile)
+    (.build
+      (->
+        (CopyObjectRequest/builder)
+        (.copySourceIfMatch copy-source)
+        (.key key)
+        (.bucket bucket)
+        (.requestPayer request-payer)))))
 
