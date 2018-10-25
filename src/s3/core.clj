@@ -71,7 +71,7 @@
            ^String request-payer
            ^String profile]
       :or {request-payer "requester"
-           profile "default"}}]
+           profile       "default"}}]
   (.copyObject
     (client profile)
     (.build
@@ -90,7 +90,7 @@
            ^String request-payer
            ^String profile]
       :or {request-payer "requester"
-           profile "default"}}]
+           profile       "default"}}]
   (.copyObject
     (client profile)
     (.build
@@ -100,4 +100,42 @@
         (.key key)
         (.bucket bucket)
         (.requestPayer request-payer)))))
+
+
+(defn copy-object
+  [& {:keys
+          [^String profile
+           ^CopyObjectRequest request]
+      :or {profile "default"}}]
+  (.copyObject (client profile) request))
+
+(defn if-match
+  [& {:keys
+      [^String copy-source
+       ^String bucket
+       ^String key
+       ^String request-payer]
+      :or {request-payer "requester"}}]
+  (.build
+      (->
+        (CopyObjectRequest/builder)
+        (.copySourceIfMatch copy-source)
+        (.key key)
+        (.bucket bucket)
+        (.requestPayer request-payer))))
+
+(defn source
+  [& {:keys
+      [^String copy-source
+       ^String bucket
+       ^String key
+       ^String request-payer]
+      :or {request-payer "requester"}}]
+  (.build
+      (->
+        (CopyObjectRequest/builder)
+        (.copySource copy-source)
+        (.key key)
+        (.bucket bucket)
+        (.requestPayer request-payer))))
 
