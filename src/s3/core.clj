@@ -128,3 +128,45 @@
         (.bucket bucket)
         (.requestPayer request-payer)))))
 
+(defmethod copy-object :IfNoneMatch
+  [{:keys
+    [^String profile
+     ^String source
+     ^String match
+     ^String bucket
+     ^String request-payer]
+    :or
+    {^String request-payer "requester"
+     ^String profile       "profile"}}]
+  (.copyObject
+    (client profile)
+    (.build
+      (->
+        (CopyObjectRequest/builder)
+        (.copySourceIfNoneMatch match)
+        (.copySource source)
+        (.key key)
+        (.bucket bucket)
+        (.requestPayer request-payer)))))
+
+(defmethod copy-object :IfUnmodifiedSince
+  [{:keys
+    [^String profile
+     ^String source
+     ^Instant instant
+     ^String bucket
+     ^String request-payer]
+    :or
+    {^String request-payer "requester"
+     ^String profile       "profile"}}]
+  (.copyObject
+    (client profile)
+    (.build
+      (->
+        (CopyObjectRequest/builder)
+        (.copySourceIfUnmodifiedSince instant)
+        (.copySource source)
+        (.key key)
+        (.bucket bucket)
+        (.requestPayer request-payer)))))
+
