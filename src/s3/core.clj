@@ -69,6 +69,7 @@
   [{:keys
     [^String profile
      ^String source
+     ^String match
      ^String key
      ^String bucket
      ^String request-payer]
@@ -80,9 +81,10 @@
     (.build
       (->
         (CopyObjectRequest/builder)
-        (.copySourceIfMatch source)
+        (.copySourceIfMatch match)
         (.key key)
         (.bucket bucket)
+        (.copySource source)
         (.requestPayer request-payer)))))
 
 (defmethod copy-object :Source
@@ -108,6 +110,7 @@
 (defmethod copy-object :IfModifiedSince
   [{:keys
     [^String profile
+     ^String source
      ^Instant instant
      ^String bucket
      ^String request-payer]
@@ -120,6 +123,7 @@
       (->
         (CopyObjectRequest/builder)
         (.copySourceIfModifiedSince instant)
+        (.copySource source)
         (.key key)
         (.bucket bucket)
         (.requestPayer request-payer)))))
