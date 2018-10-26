@@ -7,10 +7,12 @@
              CopyObjectRequest PutObjectRequest)
            (software.amazon.awssdk.auth.credentials
              ProfileCredentialsProvider)
-           (software.amazon.awssdk.core.async AsyncRequestBody)
+           (software.amazon.awssdk.core.async
+             AsyncRequestBody)
            (java.time
              Instant)
-           (java.io File)))
+           (java.io
+             File)))
 
 (defn- creds
   [^String name]
@@ -199,7 +201,7 @@
         (.bucket bucket)
         (.requestPayer request-payer)))))
 
-(defn copy-object
+(defn put-object
   [{:keys
     [^String bucket
      ^File file
