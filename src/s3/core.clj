@@ -1,12 +1,14 @@
 (ns s3.core
-  (:import (software.amazon.awssdk.services.s3 S3AsyncClient)
+  (:import (software.amazon.awssdk.services.s3
+             S3AsyncClient)
            (software.amazon.awssdk.services.s3.model
              AbortMultipartUploadRequest
              CompleteMultipartUploadRequest
              CopyObjectRequest)
            (software.amazon.awssdk.auth.credentials
              ProfileCredentialsProvider)
-           (java.time Instant)))
+           (java.time
+             Instant)))
 
 (defn- creds
   [^String name]
@@ -169,4 +171,3 @@
         (.key key)
         (.bucket bucket)
         (.requestPayer request-payer)))))
-
