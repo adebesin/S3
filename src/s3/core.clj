@@ -172,4 +172,25 @@
         (.bucket bucket)
         (.requestPayer request-payer)))))
 
+(defmethod copy-object :SSECustomAlgorithm
+  [{:keys
+    [^String profile
+     ^String source
+     ^String algorithm
+     ^String bucket
+     ^String request-payer]
+    :or
+    {^String request-payer "requester"
+     ^String profile       "profile"}}]
+  (.copyObject
+    (client profile)
+    (.build
+      (->
+        (CopyObjectRequest/builder)
+        (.copySourceSSECustomerAlgorithm algorithm)
+        (.copySource source)
+        (.key key)
+        (.bucket bucket)
+        (.requestPayer request-payer)))))
+
 
