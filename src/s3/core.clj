@@ -31,8 +31,8 @@
      ^String requester-payer
      ^String profile]
     :or
-    {requester-payer "requester"
-     profile         "default"}}]
+    {^String requester-payer "requester"
+     ^String profile         "default"}}]
   (.abortMultipartUpload
     (client profile)
     (.build
@@ -51,8 +51,8 @@
      ^String request-payer
      ^String profile]
     :or
-    {request-payer "requester"
-     profile       "default"}}]
+    {^String request-payer "requester"
+     ^String profile       "default"}}]
   (.completeMultipartUpload
     (client profile)
     (.build
@@ -71,9 +71,12 @@
      ^String source
      ^String key
      ^String bucket
-     ^String request-payer]}]
+     ^String request-payer]
+    :or
+    {^String profile       "default"
+     ^String request-payer "requester"}}]
   (.copyObject
-    (client (:profile this))
+    (client profile)
     (.build
       (->
         (CopyObjectRequest/builder)
@@ -88,7 +91,10 @@
      ^String source
      ^String key
      ^String bucket
-     ^String request-payer]}]
+     ^String request-payer]
+    :or
+    {^String request-payer "requester"
+     ^String profile       "profile"}}]
   (.copyObject
     (client profile)
     (.build
@@ -104,7 +110,10 @@
     [^String profile
      ^Instant instant
      ^String bucket
-     ^String request-payer]}]
+     ^String request-payer]
+    :or
+    {^String request-payer "requester"
+     ^String profile       "profile"}}]
   (.copyObject
     (client profile)
     (.build
