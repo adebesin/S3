@@ -4,11 +4,13 @@
            (software.amazon.awssdk.services.s3.model
              AbortMultipartUploadRequest
              CompleteMultipartUploadRequest
-             CopyObjectRequest)
+             CopyObjectRequest PutObjectRequest)
            (software.amazon.awssdk.auth.credentials
              ProfileCredentialsProvider)
+           (software.amazon.awssdk.core.async AsyncRequestBody)
            (java.time
-             Instant)))
+             Instant)
+           (java.io File)))
 
 (defn- creds
   [^String name]
@@ -196,5 +198,25 @@
         (.key key)
         (.bucket bucket)
         (.requestPayer request-payer)))))
+
+(defn copy-object
+  [{:keys
+    [^String bucket
+     ^File file
+     ^String key
+     ^String request-payer
+     ^String profile]
+    :or
+    {^String request-payer "requester"
+     ^String profile       "profile"}}]
+  (.putObject
+    (client profile)
+    (.build
+      (->
+        (PutObjectRequest/builder)
+        (.key key)
+        (.bucket bucket)
+        (.requestPayer request-payer)))
+    (AsyncRequestBody/fromFile file)))
 
 
