@@ -69,12 +69,12 @@
 
 (defmethod copy-object :IfMatch
   [{:keys
-    [^String profile
-     ^String source
+    [^String source
+     ^String bucket
      ^String match
      ^String key
-     ^String bucket
-     ^String request-payer]
+     ^String request-payer
+     ^String profile]
     :or
     {^String profile       "default"
      ^String request-payer "requester"}}]
@@ -91,11 +91,11 @@
 
 (defmethod copy-object :Source
   [{:keys
-    [^String profile
-     ^String source
-     ^String key
+    [^String source
      ^String bucket
-     ^String request-payer]
+     ^String key
+     ^String request-payer
+     ^String profile]
     :or
     {^String request-payer "requester"
      ^String profile       "profile"}}]
@@ -111,11 +111,12 @@
 
 (defmethod copy-object :IfModifiedSince
   [{:keys
-    [^String profile
-     ^String source
-     ^Instant instant
+    [^String source
      ^String bucket
-     ^String request-payer]
+     ^String key
+     ^Instant instant
+     ^String request-payer
+     ^String profile]
     :or
     {^String request-payer "requester"
      ^String profile       "profile"}}]
@@ -132,11 +133,12 @@
 
 (defmethod copy-object :IfNoneMatch
   [{:keys
-    [^String profile
-     ^String source
-     ^String match
+    [^String source
      ^String bucket
-     ^String request-payer]
+     ^String key
+     ^String match
+     ^String request-payer
+     ^String profile]
     :or
     {^String request-payer "requester"
      ^String profile       "profile"}}]
@@ -153,11 +155,12 @@
 
 (defmethod copy-object :IfUnmodifiedSince
   [{:keys
-    [^String profile
-     ^String source
-     ^Instant instant
+    [^String source
      ^String bucket
-     ^String request-payer]
+     ^String key
+     ^Instant instant
+     ^String request-payer
+     ^String profile]
     :or
     {^String request-payer "requester"
      ^String profile       "profile"}}]
@@ -174,11 +177,12 @@
 
 (defmethod copy-object :SSECustomAlgorithm
   [{:keys
-    [^String profile
-     ^String source
-     ^String algorithm
+    [^String source
      ^String bucket
-     ^String request-payer]
+     ^String key
+     ^String algorithm
+     ^String request-payer
+     ^String profile]
     :or
     {^String request-payer "requester"
      ^String profile       "profile"}}]
