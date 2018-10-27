@@ -204,22 +204,58 @@
 
 (defn put-object
   [{:keys
-    [^File file
-     ^String bucket
-     ^String key
-     ^String request-payer
-     ^String profile]
+    [^File File
+     ^String Bucket
+     ^String Acl
+     ^String CacheControl
+     ^String ContentDisposition
+     ^String ContentEncoding
+     ^String ContentLanguage
+     ^String ContentMD5
+     ^String ContentType
+     ^Instant Instant
+     ^String GrantFullControl
+     ^String GrantRead
+     ^String GrantReadAcp
+     ^String GrantWriteAcp
+     ^String StorageClass
+     ^String WebsiteRedirectLocation
+     ^String SseCustomerAlgorithm
+     ^String SseCustomerKey
+     ^String Sse
+     ^String SseKmsKeyId
+     ^String Key
+     ^String RequestPayer
+     ^String Profile]
     :or
-    {^String request-payer "requester"
-     ^String profile       "profile"}}]
+    {^String RequestPayer "requester"
+     ^String Profile       "profile"}}]
   (.putObject
-    (client profile)
+    (client Profile)
     (.build
       (->
         (PutObjectRequest/builder)
-        (.key key)
-        (.bucket bucket)
-        (.requestPayer request-payer)))
-    (AsyncRequestBody/fromFile file)))
+        (.key Key)
+        (.bucket Bucket)
+        (.acl Acl)
+        (.cacheControl CacheControl)
+        (.contentDisposition ContentDisposition)
+        (.contentEncoding ContentEncoding)
+        (.contentLanguage ContentLanguage)
+        (.contentMD5 ContentMD5)
+        (.contentType ContentType)
+        (.expires Instant)
+        (.grantFullControl GrantFullControl)
+        (.grantRead GrantRead)
+        (.grantReadACP GrantReadAcp)
+        (.grantWriteACP GrantWriteAcp)
+        (.serverSideEncryption Sse)
+        (.storageClass StorageClass)
+        (.websiteRedirectLocation WebsiteRedirectLocation)
+        (.requestPayer RequestPayer)
+        (.sseCustomerAlgorithm SseCustomerAlgorithm)
+        (.sseCustomerKey SseCustomerKey)
+        (.ssekmsKeyId SseKmsKeyId)))
+    (AsyncRequestBody/fromFile File)))
 
 
