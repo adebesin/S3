@@ -1,18 +1,19 @@
 (ns s3.core
-  (:import (software.amazon.awssdk.services.s3
-             S3AsyncClient)
-           (software.amazon.awssdk.services.s3.model
-             AbortMultipartUploadRequest
-             CompleteMultipartUploadRequest
-             CopyObjectRequest PutObjectRequest)
-           (software.amazon.awssdk.auth.credentials
-             ProfileCredentialsProvider)
-           (software.amazon.awssdk.core.async
-             AsyncRequestBody)
-           (java.time
-             Instant)
-           (java.io
-             File)))
+  (:import
+    (software.amazon.awssdk.services.s3
+      S3AsyncClient)
+    (software.amazon.awssdk.services.s3.model
+      AbortMultipartUploadRequest
+      CompleteMultipartUploadRequest
+      CopyObjectRequest PutObjectRequest)
+    (software.amazon.awssdk.auth.credentials
+      ProfileCredentialsProvider)
+    (software.amazon.awssdk.core.async
+      AsyncRequestBody)
+    (java.time
+      Instant)
+    (java.io
+      File)))
 
 (defn- creds
   [^String name]
@@ -203,8 +204,8 @@
 
 (defn put-object
   [{:keys
-    [^String bucket
-     ^File file
+    [^File file
+     ^String bucket
      ^String key
      ^String request-payer
      ^String profile]
