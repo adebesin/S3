@@ -15,6 +15,8 @@
     (java.io
       File)))
 
+(defmulti copy-object :Type)
+
 (defn- creds
   [^String name]
   (.build
@@ -28,7 +30,8 @@
   ([^String name]
    (.build
      (-> (S3AsyncClient/builder)
-         (.credentialsProvider (creds name))))))
+         (.credentialsProvider
+           (creds name))))))
 
 (defn abort-multipart-upload
   [{:keys
@@ -52,155 +55,154 @@
 
 (defn complete-multipart-upload
   [{:keys
-    [^String bucket
-     ^String key
-     ^String upload-id
-     ^String request-payer
-     ^String profile]
+    [^String Bucket
+     ^String Key
+     ^String UploadId
+     ^String RequestPayer
+     ^String Profile]
     :or
-    {^String request-payer "requester"
-     ^String profile       "default"}}]
+    {^String RequestPayer "requester"
+     ^String Profile       "default"}}]
   (.completeMultipartUpload
-    (client profile)
+    (client Profile)
     (.build
       (->
         (CompleteMultipartUploadRequest/builder)
-        (.bucket bucket)
-        (.key key)
-        (.uploadId upload-id)
-        (.requestPayer request-payer)))))
-
-(defmulti copy-object :Type)
+        (.bucket Bucket)
+        (.key Key)
+        (.uploadId UploadId)
+        (.requestPayer RequestPayer)))))
 
 (defmethod copy-object :IfMatch
   [{:keys
-    [^String source
-     ^String bucket
-     ^String match
-     ^String key
-     ^String request-payer
-     ^String profile]
+    [^String Source
+     ^String Bucket
+     ^String Match
+     ^String Key
+     ^String RequestPayer
+     ^String Profile]
     :or
-    {^String profile       "default"
-     ^String request-payer "requester"}}]
+    {^String Profile       "default"
+     ^String RequestPayer "requester"}}]
   (.copyObject
-    (client profile)
+    (client Profile)
     (.build
       (->
         (CopyObjectRequest/builder)
-        (.copySourceIfMatch match)
-        (.key key)
-        (.bucket bucket)
-        (.copySource source)
-        (.requestPayer request-payer)))))
+        (.copySourceIfMatch Match)
+        (.key Key)
+        (.bucket Bucket)
+        (.copySource Source)
+        (.requestPayer RequestPayer)))))
 
 (defmethod copy-object :Source
   [{:keys
-    [^String source
-     ^String bucket
-     ^String key
-     ^String request-payer
-     ^String profile]
+    [^String Source
+     ^String Bucket
+     ^String Key
+     ^String RequestPayer
+     ^String Profile]
     :or
-    {^String request-payer "requester"
-     ^String profile       "profile"}}]
+    {^String RequestPayer "requester"
+     ^String Profile       "Profile"}}]
   (.copyObject
-    (client profile)
+    (client Profile)
     (.build
       (->
         (CopyObjectRequest/builder)
-        (.copySource source)
-        (.key key)
-        (.bucket bucket)
-        (.requestPayer request-payer)))))
+        (.copySource Source)
+        (.key Key)
+        (.bucket Bucket)
+        (.requestPayer RequestPayer)))))
 
 (defmethod copy-object :IfModifiedSince
   [{:keys
-    [^String source
-     ^String bucket
-     ^String key
-     ^Instant instant
-     ^String request-payer
-     ^String profile]
+    [^String Source
+     ^String Bucket
+     ^String Key
+     ^Instant Instant
+     ^String RequestPayer
+     ^String Profile]
     :or
-    {^String request-payer "requester"
-     ^String profile       "profile"}}]
+    {^String RequestPayer "requester"
+     ^String Profile       "Profile"}}]
   (.copyObject
-    (client profile)
+    (client Profile)
     (.build
       (->
         (CopyObjectRequest/builder)
-        (.copySourceIfModifiedSince instant)
-        (.copySource source)
-        (.key key)
-        (.bucket bucket)
-        (.requestPayer request-payer)))))
+        (.copySourceIfModifiedSince
+          Instant)
+        (.copySource Source)
+        (.key Key)
+        (.bucket Bucket)
+        (.requestPayer RequestPayer)))))
 
 (defmethod copy-object :IfNoneMatch
   [{:keys
-    [^String source
-     ^String bucket
-     ^String key
-     ^String match
-     ^String request-payer
-     ^String profile]
+    [^String Source
+     ^String Bucket
+     ^String Key
+     ^String Match
+     ^String RequestPayer
+     ^String Profile]
     :or
-    {^String request-payer "requester"
-     ^String profile       "profile"}}]
+    {^String RequestPayer "requester"
+     ^String Profile       "Profile"}}]
   (.copyObject
-    (client profile)
+    (client Profile)
     (.build
       (->
         (CopyObjectRequest/builder)
-        (.copySourceIfNoneMatch match)
-        (.copySource source)
-        (.key key)
-        (.bucket bucket)
-        (.requestPayer request-payer)))))
+        (.copySourceIfNoneMatch Match)
+        (.copySource Source)
+        (.key Key)
+        (.bucket Bucket)
+        (.requestPayer RequestPayer)))))
 
 (defmethod copy-object :IfUnmodifiedSince
   [{:keys
-    [^String source
-     ^String bucket
-     ^String key
-     ^Instant instant
-     ^String request-payer
-     ^String profile]
+    [^String Source
+     ^String Bucket
+     ^String Key
+     ^Instant Instant
+     ^String RequestPayer
+     ^String Profile]
     :or
-    {^String request-payer "requester"
-     ^String profile       "profile"}}]
+    {^String RequestPayer "requester"
+     ^String Profile       "Profile"}}]
   (.copyObject
-    (client profile)
+    (client Profile)
     (.build
       (->
         (CopyObjectRequest/builder)
-        (.copySourceIfUnmodifiedSince instant)
-        (.copySource source)
-        (.key key)
-        (.bucket bucket)
-        (.requestPayer request-payer)))))
+        (.copySourceIfUnmodifiedSince Instant)
+        (.copySource Source)
+        (.key Key)
+        (.bucket Bucket)
+        (.requestPayer RequestPayer)))))
 
 (defmethod copy-object :SSECustomAlgorithm
   [{:keys
-    [^String source
-     ^String bucket
-     ^String key
-     ^String algorithm
-     ^String request-payer
-     ^String profile]
+    [^String Source
+     ^String Bucket
+     ^String Key
+     ^String Algorithm
+     ^String RequestPayer
+     ^String Profile]
     :or
-    {^String request-payer "requester"
-     ^String profile       "profile"}}]
+    {^String RequestPayer "requester"
+     ^String Profile       "Profile"}}]
   (.copyObject
-    (client profile)
+    (client Profile)
     (.build
       (->
         (CopyObjectRequest/builder)
-        (.copySourceSSECustomerAlgorithm algorithm)
-        (.copySource source)
-        (.key key)
-        (.bucket bucket)
-        (.requestPayer request-payer)))))
+        (.copySourceSSECustomerAlgorithm Algorithm)
+        (.copySource Source)
+        (.key Key)
+        (.bucket Bucket)
+        (.requestPayer RequestPayer)))))
 
 (defn put-object
   [{:keys
@@ -229,7 +231,7 @@
      ^String Profile]
     :or
     {^String RequestPayer "requester"
-     ^String Profile       "profile"}}]
+     ^String Profile       "Profile"}}]
   (.putObject
     (client Profile)
     (.build
