@@ -32,23 +32,23 @@
 
 (defn abort-multipart-upload
   [{:keys
-    [^String bucket
-     ^String key
-     ^String upload-id
-     ^String requester-payer
-     ^String profile]
+    [^String Bucket
+     ^String Key
+     ^String UploadId
+     ^String RequesterPayer
+     ^String Profile]
     :or
-    {^String requester-payer "requester"
-     ^String profile         "default"}}]
+    {^String RequesterPayer "requester"
+     ^String Profile         "default"}}]
   (.abortMultipartUpload
-    (client profile)
+    (client Profile)
     (.build
       (->
         (AbortMultipartUploadRequest/builder)
-        (.bucket bucket)
-        (.key key)
-        (.uploadId upload-id)
-        (.requestPayer requester-payer)))))
+        (.bucket Bucket)
+        (.key Key)
+        (.uploadId UploadId)
+        (.requestPayer RequesterPayer)))))
 
 (defn complete-multipart-upload
   [{:keys
