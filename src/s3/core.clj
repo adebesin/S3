@@ -5,7 +5,13 @@
     (software.amazon.awssdk.services.s3.model
       AbortMultipartUploadRequest
       CompleteMultipartUploadRequest
-      CopyObjectRequest PutObjectRequest)
+      CopyObjectRequest
+      PutObjectRequest
+      PutObjectAclRequest
+      ObjectCannedACL
+      RequestPayer
+      PutObjectTaggingRequest
+      Tagging)
     (software.amazon.awssdk.auth.credentials
       ProfileCredentialsProvider)
     (software.amazon.awssdk.core.async
@@ -13,7 +19,8 @@
     (java.time
       Instant)
     (java.io
-      File)))
+      File)
+    (software.amazon.awssdk.awscore AwsRequestOverrideConfiguration)))
 
 (defmulti copy-object :Type)
 
@@ -41,8 +48,8 @@
      ^String RequesterPayer
      ^String Profile]
     :or
-    {^String RequesterPayer "requester"
-     ^String Profile         "default"}}]
+    {^RequestPayer RequesterPayer (RequestPayer/REQUESTER)
+     ^String Profile              "default"}}]
   (.abortMultipartUpload
     (client Profile)
     (.build
@@ -61,8 +68,8 @@
      ^String RequestPayer
      ^String Profile]
     :or
-    {^String RequestPayer "requester"
-     ^String Profile       "default"}}]
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
   (.completeMultipartUpload
     (client Profile)
     (.build
@@ -82,8 +89,8 @@
      ^String RequestPayer
      ^String Profile]
     :or
-    {^String Profile       "default"
-     ^String RequestPayer "requester"}}]
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
   (.copyObject
     (client Profile)
     (.build
@@ -103,8 +110,8 @@
      ^String RequestPayer
      ^String Profile]
     :or
-    {^String RequestPayer "requester"
-     ^String Profile       "Profile"}}]
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
   (.copyObject
     (client Profile)
     (.build
@@ -124,8 +131,8 @@
      ^String RequestPayer
      ^String Profile]
     :or
-    {^String RequestPayer "requester"
-     ^String Profile       "Profile"}}]
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
   (.copyObject
     (client Profile)
     (.build
@@ -147,8 +154,8 @@
      ^String RequestPayer
      ^String Profile]
     :or
-    {^String RequestPayer "requester"
-     ^String Profile       "Profile"}}]
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
   (.copyObject
     (client Profile)
     (.build
@@ -169,8 +176,8 @@
      ^String RequestPayer
      ^String Profile]
     :or
-    {^String RequestPayer "requester"
-     ^String Profile       "Profile"}}]
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
   (.copyObject
     (client Profile)
     (.build
@@ -191,8 +198,8 @@
      ^String RequestPayer
      ^String Profile]
     :or
-    {^String RequestPayer "requester"
-     ^String Profile       "Profile"}}]
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
   (.copyObject
     (client Profile)
     (.build
@@ -208,7 +215,7 @@
   [{:keys
     [^File File
      ^String Bucket
-     ^String Acl
+     ^ObjectCannedACL Acl
      ^String CacheControl
      ^String ContentDisposition
      ^String ContentEncoding
@@ -230,8 +237,8 @@
      ^String RequestPayer
      ^String Profile]
     :or
-    {^String RequestPayer "requester"
-     ^String Profile       "Profile"}}]
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
   (.putObject
     (client Profile)
     (.build
@@ -259,5 +266,59 @@
         (.sseCustomerKey SseCustomerKey)
         (.ssekmsKeyId SseKmsKeyId)))
     (AsyncRequestBody/fromFile File)))
+
+(defn put-object-acl
+  [{:keys
+    [^String Bucket
+     ^String Acl
+     ^String Key
+     ^String GrantWriteAcp
+     ^String GrantWrite
+     ^String GrantReadAcp
+     ^String GrantFullControl
+     ^String ContentMd5
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putObjectAcl
+    (client Profile)
+    (.build
+      (->
+        (PutObjectAclRequest/builder)
+        (.key Key)
+        (.bucket Bucket)
+        (.acl Acl)
+        (.grantWriteACP GrantWriteAcp)
+        (.grantWrite GrantWrite)
+        (.grantReadACP GrantReadAcp)
+        (.grantFullControl GrantFullControl)
+        (.contentMD5 ContentMd5)))))
+
+(defn put-object-tagging
+  [{:keys
+    [^String Bucket
+     ^String Key
+     ^Tagging Tagging
+     ^String ContentMd5
+     ^AwsRequestOverrideConfiguration AwsRequestOverrideConfiguration
+     ^String VersionId
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putObjectTagging
+    (client Profile)
+    (.build
+      (->
+        (PutObjectTaggingRequest/builder)
+        (.key Key)
+        (.bucket Bucket)
+        (.tagging Tagging)
+        (.contentMD5 ContentMd5)
+        (.overrideConfiguration AwsRequestOverrideConfiguration)
+        (.versionId VersionId)))))
 
 
