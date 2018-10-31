@@ -32,6 +32,9 @@
     (java.io
       File)))
 
+(defmulti put-bucket :Type)
+(defmulti put-object :Type)
+
 (defn- creds
   [^String name]
   (.build
@@ -149,7 +152,7 @@
         (.bucket Bucket)
         (.requestPayer RequestPayer)))))
 
-(defn put-object
+(defmethod put-object :Request
   [{:keys
     [^File FromFile
      ^String Bucket
@@ -205,7 +208,7 @@
         (.ssekmsKeyId SseKmsKeyId)))
     (AsyncRequestBody/fromFile FromFile)))
 
-(defn put-object-acl
+(defmethod put-object :AclRequest
   [{:keys
     [^String Bucket
      ^ObjectCannedACL Acl
@@ -234,7 +237,7 @@
         (.grantFullControl GrantFullControl)
         (.contentMD5 ContentMd5)))))
 
-(defn put-object-tagging
+(defmethod put-object :TaggingRequest
   [{:keys
     [^String Bucket
      ^String Key
@@ -257,7 +260,7 @@
         (.contentMD5 ContentMd5)
         (.versionId VersionId)))))
 
-(defn put-bucket-accelerate-configuration
+(defmethod put-bucket :AccelerateConfigurationRequest
   [{:keys
     [^String Bucket
      ^AccelerateConfiguration AccelerateConfiguration
@@ -274,7 +277,7 @@
         (.bucket Bucket)
         (.accelerateConfiguration AccelerateConfiguration)))))
 
-(defn put-bucket-acl
+(defmethod put-bucket :AclRequest
   [{:keys
     [^String Bucket
      ^AccessControlPolicy AccessControlPolicy
@@ -305,7 +308,7 @@
         (.grantWrite GrantWrite)
         (.grantWriteACP GrantWriteAcp)))))
 
-(defn put-bucket-analytics-configuration
+(defmethod put-bucket :AnalyticsConfigurationRequest
   [{:keys
     [^String Bucket
      ^AnalyticsConfiguration AnalyticsConfiguration
@@ -324,7 +327,7 @@
         (.analyticsConfiguration AnalyticsConfiguration)
         (.id Id)))))
 
-(defn put-bucket-cors
+(defmethod put-bucket :CorsRequest
   [{:keys
     [^String Bucket
      ^CORSConfiguration CorsConfiguration
@@ -343,7 +346,7 @@
         (.contentMD5 ContentMd5)
         (.corsConfiguration CorsConfiguration)))))
 
-(defn put-bucket-encryption
+(defmethod put-bucket :EncryptionRequest
   [{:keys
     [^String Bucket
      ^CORSConfiguration CorsConfiguration
