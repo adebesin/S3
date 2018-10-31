@@ -11,7 +11,18 @@
       ObjectCannedACL
       RequestPayer
       PutObjectTaggingRequest
-      Tagging)
+      Tagging
+      PutBucketAccelerateConfigurationRequest
+      AccelerateConfiguration
+      PutBucketAclRequest
+      AccessControlPolicy
+      BucketCannedACL
+      PutBucketAnalyticsConfigurationRequest
+      AnalyticsConfiguration
+      PutBucketCorsRequest
+      CORSConfiguration
+      MetadataDirective
+      ServerSideEncryption)
     (software.amazon.awssdk.auth.credentials
       ProfileCredentialsProvider)
     (software.amazon.awssdk.core.async
@@ -19,10 +30,7 @@
     (java.time
       Instant)
     (java.io
-      File)
-    (software.amazon.awssdk.awscore AwsRequestOverrideConfiguration)))
-
-(defmulti copy-object :Type)
+      File)))
 
 (defn- creds
   [^String name]
@@ -80,12 +88,31 @@
         (.uploadId UploadId)
         (.requestPayer RequestPayer)))))
 
-(defmethod copy-object :IfMatch
+(defn copy-object
   [{:keys
-    [^String Source
+    [^String CopySource
      ^String Bucket
-     ^String Match
+     ^String CopySourceIfMatch
+     ^String CopySourceIfNoneMatch
      ^String Key
+     ^Instant CopySourceIfModifiedSince
+     ^Instant CopySourceIfUnmodifiedSince
+     ^String CopySourceSseCustomerAlgorithm
+     ^String GrantWriteAcp
+     ^String GrantReadAcp
+     ^String GrantRead
+     ^String GrantFullControl
+     ^String CacheControl
+     ^String ContentDisposition
+     ^String ContentEncoding
+     ^String ContentLanguage
+     ^Instant Expires
+     ^Instant Metadata
+     ^MetadataDirective MetadataDirective
+     ^ServerSideEncryption ServerSideEncryption
+     ^String SseCustomerKey
+     ^String ContentType
+     ^ObjectCannedACL Acl
      ^String RequestPayer
      ^String Profile]
     :or
@@ -96,133 +123,44 @@
     (.build
       (->
         (CopyObjectRequest/builder)
-        (.copySourceIfMatch Match)
-        (.key Key)
-        (.bucket Bucket)
-        (.copySource Source)
-        (.requestPayer RequestPayer)))))
-
-(defmethod copy-object :Source
-  [{:keys
-    [^String Source
-     ^String Bucket
-     ^String Key
-     ^String RequestPayer
-     ^String Profile]
-    :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
-  (.copyObject
-    (client Profile)
-    (.build
-      (->
-        (CopyObjectRequest/builder)
-        (.copySource Source)
-        (.key Key)
-        (.bucket Bucket)
-        (.requestPayer RequestPayer)))))
-
-(defmethod copy-object :IfModifiedSince
-  [{:keys
-    [^String Source
-     ^String Bucket
-     ^String Key
-     ^Instant Instant
-     ^String RequestPayer
-     ^String Profile]
-    :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
-  (.copyObject
-    (client Profile)
-    (.build
-      (->
-        (CopyObjectRequest/builder)
-        (.copySourceIfModifiedSince
-          Instant)
-        (.copySource Source)
-        (.key Key)
-        (.bucket Bucket)
-        (.requestPayer RequestPayer)))))
-
-(defmethod copy-object :IfNoneMatch
-  [{:keys
-    [^String Source
-     ^String Bucket
-     ^String Key
-     ^String Match
-     ^String RequestPayer
-     ^String Profile]
-    :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
-  (.copyObject
-    (client Profile)
-    (.build
-      (->
-        (CopyObjectRequest/builder)
-        (.copySourceIfNoneMatch Match)
-        (.copySource Source)
-        (.key Key)
-        (.bucket Bucket)
-        (.requestPayer RequestPayer)))))
-
-(defmethod copy-object :IfUnmodifiedSince
-  [{:keys
-    [^String Source
-     ^String Bucket
-     ^String Key
-     ^Instant Instant
-     ^String RequestPayer
-     ^String Profile]
-    :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
-  (.copyObject
-    (client Profile)
-    (.build
-      (->
-        (CopyObjectRequest/builder)
-        (.copySourceIfUnmodifiedSince Instant)
-        (.copySource Source)
-        (.key Key)
-        (.bucket Bucket)
-        (.requestPayer RequestPayer)))))
-
-(defmethod copy-object :SSECustomAlgorithm
-  [{:keys
-    [^String Source
-     ^String Bucket
-     ^String Key
-     ^String Algorithm
-     ^String RequestPayer
-     ^String Profile]
-    :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
-  (.copyObject
-    (client Profile)
-    (.build
-      (->
-        (CopyObjectRequest/builder)
-        (.copySourceSSECustomerAlgorithm Algorithm)
-        (.copySource Source)
+        (.copySource CopySource)
+        (.copySourceIfMatch CopySourceIfMatch)
+        (.copySourceSSECustomerAlgorithm CopySourceSseCustomerAlgorithm)
+        (.copySourceIfModifiedSince CopySourceIfModifiedSince)
+        (.copySourceIfNoneMatch CopySourceIfNoneMatch)
+        (.copySourceIfUnmodifiedSince CopySourceIfUnmodifiedSince)
+        (.grantWriteACP GrantWriteAcp)
+        (.grantReadACP GrantReadAcp)
+        (.grantRead GrantRead)
+        (.grantFullControl GrantFullControl)
+        (.acl Acl)
+        (.cacheControl CacheControl)
+        (.contentDisposition ContentDisposition)
+        (.contentEncoding ContentEncoding)
+        (.contentLanguage ContentLanguage)
+        (.contentType ContentType)
+        (.expires Expires)
+        (.metadata Metadata)
+        (.metadataDirective MetadataDirective)
+        (.serverSideEncryption ServerSideEncryption)
+        (.sseCustomerKey SseCustomerKey)
+        ;;TODO add remaining method calls + rename keys below to be  more descriptive
         (.key Key)
         (.bucket Bucket)
         (.requestPayer RequestPayer)))))
 
 (defn put-object
   [{:keys
-    [^File File
+    [^File FromFile
      ^String Bucket
-     ^ObjectCannedACL Acl
+     ^ObjectCannedACL ObjectCannedAcl
      ^String CacheControl
      ^String ContentDisposition
      ^String ContentEncoding
      ^String ContentLanguage
      ^String ContentMD5
      ^String ContentType
-     ^Instant Instant
+     ^Instant Expires
      ^String GrantFullControl
      ^String GrantRead
      ^String GrantReadAcp
@@ -231,7 +169,7 @@
      ^String WebsiteRedirectLocation
      ^String SseCustomerAlgorithm
      ^String SseCustomerKey
-     ^String Sse
+     ^String ServerSideEncryption
      ^String SseKmsKeyId
      ^String Key
      ^String RequestPayer
@@ -246,31 +184,31 @@
         (PutObjectRequest/builder)
         (.key Key)
         (.bucket Bucket)
-        (.acl Acl)
+        (.acl ObjectCannedAcl)
         (.cacheControl CacheControl)
         (.contentDisposition ContentDisposition)
         (.contentEncoding ContentEncoding)
         (.contentLanguage ContentLanguage)
         (.contentMD5 ContentMD5)
         (.contentType ContentType)
-        (.expires Instant)
+        (.expires Expires)
         (.grantFullControl GrantFullControl)
         (.grantRead GrantRead)
         (.grantReadACP GrantReadAcp)
         (.grantWriteACP GrantWriteAcp)
-        (.serverSideEncryption Sse)
+        (.serverSideEncryption ServerSideEncryption)
         (.storageClass StorageClass)
         (.websiteRedirectLocation WebsiteRedirectLocation)
         (.requestPayer RequestPayer)
         (.sseCustomerAlgorithm SseCustomerAlgorithm)
         (.sseCustomerKey SseCustomerKey)
         (.ssekmsKeyId SseKmsKeyId)))
-    (AsyncRequestBody/fromFile File)))
+    (AsyncRequestBody/fromFile FromFile)))
 
 (defn put-object-acl
   [{:keys
     [^String Bucket
-     ^String Acl
+     ^ObjectCannedACL Acl
      ^String Key
      ^String GrantWriteAcp
      ^String GrantWrite
@@ -302,7 +240,6 @@
      ^String Key
      ^Tagging Tagging
      ^String ContentMd5
-     ^AwsRequestOverrideConfiguration AwsRequestOverrideConfiguration
      ^String VersionId
      ^String RequestPayer
      ^String Profile]
@@ -318,7 +255,111 @@
         (.bucket Bucket)
         (.tagging Tagging)
         (.contentMD5 ContentMd5)
-        (.overrideConfiguration AwsRequestOverrideConfiguration)
         (.versionId VersionId)))))
+
+(defn put-bucket-accelerate-configuration
+  [{:keys
+    [^String Bucket
+     ^AccelerateConfiguration AccelerateConfiguration
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putBucketAccelerateConfiguration
+    (client Profile)
+    (.build
+      (->
+        (PutBucketAccelerateConfigurationRequest/builder)
+        (.bucket Bucket)
+        (.accelerateConfiguration AccelerateConfiguration)))))
+
+(defn put-bucket-acl
+  [{:keys
+    [^String Bucket
+     ^AccessControlPolicy AccessControlPolicy
+     ^BucketCannedACL BucketCannedAcl
+     ^String ContentMd5
+     ^String GrantFullControl
+     ^String GrantRead
+     ^String GrantReadAcp
+     ^String GrantWrite
+     ^String GrantWriteAcp
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putBucketAcl
+    (client Profile)
+    (.build
+      (->
+        (PutBucketAclRequest/builder)
+        (.bucket Bucket)
+        (.accessControlPolicy AccessControlPolicy)
+        (.acl BucketCannedAcl)
+        (.contentMD5 ContentMd5)
+        (.grantFullControl GrantFullControl)
+        (.grantRead GrantRead)
+        (.grantReadACP GrantReadAcp)
+        (.grantWrite GrantWrite)
+        (.grantWriteACP GrantWriteAcp)))))
+
+(defn put-bucket-analytics-configuration
+  [{:keys
+    [^String Bucket
+     ^AnalyticsConfiguration AnalyticsConfiguration
+     ^String Id
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putBucketAnalyticsConfiguration
+    (client Profile)
+    (.build
+      (->
+        (PutBucketAnalyticsConfigurationRequest/builder)
+        (.bucket Bucket)
+        (.analyticsConfiguration AnalyticsConfiguration)
+        (.id Id)))))
+
+(defn put-bucket-cors
+  [{:keys
+    [^String Bucket
+     ^CORSConfiguration CorsConfiguration
+     ^String ContentMd5
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putBucketCors
+    (client Profile)
+    (.build
+      (->
+        (PutBucketCorsRequest/builder)
+        (.bucket Bucket)
+        (.contentMD5 ContentMd5)
+        (.corsConfiguration CorsConfiguration)))))
+
+(defn put-bucket-encryption
+  [{:keys
+    [^String Bucket
+     ^CORSConfiguration CorsConfiguration
+     ^String ContentMd5
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putBucketCors
+    (client Profile)
+    (.build
+      (->
+        (PutBucketCorsRequest/builder)
+        (.bucket Bucket)
+        (.contentMD5 ContentMd5)
+        (.corsConfiguration CorsConfiguration)))))
 
 
