@@ -1,4 +1,8 @@
 (ns s3.core
+  (:require
+            [clojure.spec.test.alpha :as stest]
+            [clojure.spec.alpha :as s]
+            [s3.core.specs])
   (:import
     (software.amazon.awssdk.services.s3
       S3AsyncClient)
