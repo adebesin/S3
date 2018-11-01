@@ -22,7 +22,31 @@
       PutBucketCorsRequest
       CORSConfiguration
       MetadataDirective
-      ServerSideEncryption PutBucketInventoryConfigurationRequest InventoryConfiguration PutBucketLifecycleConfigurationRequest BucketLifecycleConfiguration PutBucketLoggingRequest BucketLoggingStatus)
+      ServerSideEncryption
+      PutBucketInventoryConfigurationRequest
+      InventoryConfiguration
+      PutBucketLifecycleConfigurationRequest
+      BucketLifecycleConfiguration
+      PutBucketLoggingRequest
+      BucketLoggingStatus
+      PutBucketMetricsConfigurationRequest
+      MetricsConfiguration
+      PutBucketNotificationConfigurationRequest
+      NotificationConfiguration
+      PutBucketNotificationRequest
+      NotificationConfigurationDeprecated
+      PutBucketLifecycleRequest
+      LifecycleConfiguration
+      PutBucketPolicyRequest
+      PutBucketReplicationRequest
+      ReplicationConfiguration
+      PutBucketRequestPaymentRequest
+      RequestPaymentConfiguration
+      PutBucketTaggingRequest
+      PutBucketVersioningRequest
+      VersioningConfiguration
+      PutBucketWebsiteRequest
+      WebsiteConfiguration)
     (software.amazon.awssdk.auth.credentials
       ProfileCredentialsProvider)
     (software.amazon.awssdk.core.async
@@ -359,25 +383,6 @@
         (.contentMD5 ContentMd5)
         (.corsConfiguration CorsConfiguration)))))
 
-(defmethod put-bucket :EncryptionRequest
-  [{:keys
-    [^String Bucket
-     ^CORSConfiguration CorsConfiguration
-     ^String ContentMd5
-     ^String RequestPayer
-     ^String Profile]
-    :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
-  (.putBucketCors
-    (client Profile)
-    (.build
-      (->
-        (PutBucketCorsRequest/builder)
-        (.bucket Bucket)
-        (.contentMD5 ContentMd5)
-        (.corsConfiguration CorsConfiguration)))))
-
 (defmethod put-bucket :InventoryConfigurationRequest
   [{:keys
     [^String Bucket
@@ -388,7 +393,7 @@
     :or
     {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
      ^String Profile            "default"}}]
-  (.putBucketCors
+  (.putBucketInventoryConfiguration
     (client Profile)
     (.build
       (->
@@ -397,22 +402,41 @@
         (.id Id)
         (.inventoryConfiguration InventoryConfiguration)))))
 
-(defmethod put-bucket :LifecycleConfigurationRequest
+(defmethod put-bucket :LifecycleRequest
   [{:keys
     [^String Bucket
-     ^BucketLifecycleConfiguration LifecycleConfiguration
+     ^LifecycleConfiguration LifecycleConfiguration
+     ^String ContentMd5
      ^String RequestPayer
      ^String Profile]
     :or
     {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
      ^String Profile            "default"}}]
-  (.putBucketCors
+  (.putBucketLifecycle
+    (client Profile)
+    (.build
+      (->
+        (PutBucketLifecycleRequest/builder)
+        (.bucket Bucket)
+        (.lifecycleConfiguration LifecycleConfiguration)
+        (.contentMD5 ContentMd5)))))
+
+(defmethod put-bucket :LifecycleConfigurationRequest
+  [{:keys
+    [^String Bucket
+     ^BucketLifecycleConfiguration BucketLifecycleConfiguration
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putBucketLifecycleConfiguration
     (client Profile)
     (.build
       (->
         (PutBucketLifecycleConfigurationRequest/builder)
         (.bucket Bucket)
-        (.lifecycleConfiguration LifecycleConfiguration)))))
+        (.lifecycleConfiguration BucketLifecycleConfiguration)))))
 
 (defmethod put-bucket :LoggingRequest
   [{:keys
@@ -423,7 +447,7 @@
     :or
     {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
      ^String Profile            "default"}}]
-  (.putBucketCors
+  (.putBucketLogging
     (client Profile)
     (.build
       (->
@@ -431,19 +455,173 @@
         (.bucket Bucket)
         (.bucketLoggingStatus BucketLoggingStatus)))))
 
-(defmethod put-bucket :MetricsRequest
+(defmethod put-bucket :MetricsConfigurationRequest
   [{:keys
     [^String Bucket
-     ^BucketLoggingStatus BucketLoggingStatus
+     ^MetricsConfiguration MetricsConfiguration
      ^String RequestPayer
      ^String Profile]
     :or
     {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
      ^String Profile            "default"}}]
-  (.putBucketCors
+  (.putBucketMetricsConfiguration
     (client Profile)
     (.build
       (->
-        (PutBucketLoggingRequest/builder)
+        (PutBucketMetricsConfigurationRequest/builder)
         (.bucket Bucket)
-        (.bucketLoggingStatus BucketLoggingStatus)))))
+        (.metricsConfiguration MetricsConfiguration)))))
+
+(defmethod put-bucket :NotificationRequest
+  [{:keys
+    [^String Bucket
+     ^NotificationConfigurationDeprecated NotificationConfigurationDeprecated
+     ^String ContentMd5
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putBucketNotification
+    (client Profile)
+    (.build
+      (->
+        (PutBucketNotificationRequest/builder)
+        (.bucket Bucket)
+        (.contentMD5 ContentMd5)
+        (.notificationConfiguration NotificationConfigurationDeprecated)))))
+
+(defmethod put-bucket :NotificationConfigurationRequest
+  [{:keys
+    [^String Bucket
+     ^NotificationConfiguration NotificationConfiguration
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putBucketNotificationConfiguration
+    (client Profile)
+    (.build
+      (->
+        (PutBucketNotificationConfigurationRequest/builder)
+        (.bucket Bucket)
+        (.notificationConfiguration NotificationConfiguration)))))
+
+(defmethod put-bucket :PolicyRequest
+  [{:keys
+    [^String Bucket
+     ^String Policy
+     ^String ContentMd5
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putBucketPolicy
+    (client Profile)
+    (.build
+      (->
+        (PutBucketPolicyRequest/builder)
+        (.bucket Bucket)
+        (.policy Policy)
+        (.contentMD5 ContentMd5)))))
+
+(defmethod put-bucket :ReplicationRequest
+  [{:keys
+    [^String Bucket
+     ^ReplicationConfiguration ReplicationConfiguration
+     ^String ContentMd5
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putBucketReplication
+    (client Profile)
+    (.build
+      (->
+        (PutBucketReplicationRequest/builder)
+        (.bucket Bucket)
+        (.replicationConfiguration ReplicationConfiguration)
+        (.contentMD5 ContentMd5)))))
+
+(defmethod put-bucket :PaymentRequest
+  [{:keys
+    [^String Bucket
+     ^RequestPaymentConfiguration RequestPaymentConfiguration
+     ^String ContentMd5
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putBucketRequestPayment
+    (client Profile)
+    (.build
+      (->
+        (PutBucketRequestPaymentRequest/builder)
+        (.bucket Bucket)
+        (.requestPaymentConfiguration RequestPaymentConfiguration)
+        (.contentMD5 ContentMd5)))))
+
+(defmethod put-bucket :TaggingRequest
+  [{:keys
+    [^String Bucket
+     ^Tagging Tagging
+     ^String ContentMd5
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putBucketTagging
+    (client Profile)
+    (.build
+      (->
+        (PutBucketTaggingRequest/builder)
+        (.bucket Bucket)
+        (.tagging Tagging)
+        (.contentMD5 ContentMd5)))))
+
+(defmethod put-bucket :VersioningRequest
+  [{:keys
+    [^String Bucket
+     ^VersioningConfiguration VersioningConfiguration
+     ^String ContentMd5
+     ^String Mfa
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putBucketVersioning
+    (client Profile)
+    (.build
+      (->
+        (PutBucketVersioningRequest/builder)
+        (.bucket Bucket)
+        (.versioningConfiguration VersioningConfiguration)
+        (.mfa Mfa)
+        (.contentMD5 ContentMd5)))))
+
+(defmethod put-bucket :WebsiteRequest
+  [{:keys
+    [^String Bucket
+     ^WebsiteConfiguration WebsiteConfiguration
+     ^String ContentMd5
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putBucketWebsite
+    (client Profile)
+    (.build
+      (->
+        (PutBucketWebsiteRequest/builder)
+        (.bucket Bucket)
+        (.websiteConfiguration WebsiteConfiguration)
+        (.contentMD5 ContentMd5)))))
+
+
