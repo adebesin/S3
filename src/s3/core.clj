@@ -193,7 +193,8 @@
         (.bucket Bucket)
         (.requestPayer RequestPayer)))))
 
-(defmethod put-object :Request
+(defmethod put-object
+  :Request
   [{:keys
     [^File FromFile
      ^String Bucket
@@ -249,7 +250,8 @@
         (.ssekmsKeyId SseKmsKeyId)))
     (AsyncRequestBody/fromFile FromFile)))
 
-(defmethod put-object :AclRequest
+(defmethod put-object
+  AclRequest
   [{:keys
     [^String Bucket
      ^ObjectCannedACL Acl
@@ -278,7 +280,8 @@
         (.grantFullControl GrantFullControl)
         (.contentMD5 ContentMd5)))))
 
-(defmethod put-object :TaggingRequest
+(defmethod put-object
+  :TaggingRequest
   [{:keys
     [^String Bucket
      ^String Key
@@ -301,7 +304,8 @@
         (.contentMD5 ContentMd5)
         (.versionId VersionId)))))
 
-(defmethod put-bucket :AccelerateConfigurationRequest
+(defmethod put-bucket
+  :AccelerateConfigurationRequest
   [{:keys
     [^String Bucket
      ^AccelerateConfiguration AccelerateConfiguration
@@ -318,7 +322,8 @@
         (.bucket Bucket)
         (.accelerateConfiguration AccelerateConfiguration)))))
 
-(defmethod put-bucket :AclRequest
+(defmethod put-bucket
+  :AclRequest
   [{:keys
     [^String Bucket
      ^AccessControlPolicy AccessControlPolicy
@@ -349,7 +354,8 @@
         (.grantWrite GrantWrite)
         (.grantWriteACP GrantWriteAcp)))))
 
-(defmethod put-bucket :AnalyticsConfigurationRequest
+(defmethod put-bucket
+  :AnalyticsConfigurationRequest
   [{:keys
     [^String Bucket
      ^AnalyticsConfiguration AnalyticsConfiguration
@@ -368,7 +374,8 @@
         (.analyticsConfiguration AnalyticsConfiguration)
         (.id Id)))))
 
-(defmethod put-bucket :CorsRequest
+(defmethod put-bucket
+  :CorsRequest
   [{:keys
     [^String Bucket
      ^CORSConfiguration CorsConfiguration
@@ -387,7 +394,8 @@
         (.contentMD5 ContentMd5)
         (.corsConfiguration CorsConfiguration)))))
 
-(defmethod put-bucket :InventoryConfigurationRequest
+(defmethod put-bucket
+  :InventoryConfigurationRequest
   [{:keys
     [^String Bucket
      ^String Id
@@ -406,7 +414,8 @@
         (.id Id)
         (.inventoryConfiguration InventoryConfiguration)))))
 
-(defmethod put-bucket :LifecycleRequest
+(defmethod put-bucket
+  :LifecycleRequest
   [{:keys
     [^String Bucket
      ^LifecycleConfiguration LifecycleConfiguration
@@ -425,7 +434,8 @@
         (.lifecycleConfiguration LifecycleConfiguration)
         (.contentMD5 ContentMd5)))))
 
-(defmethod put-bucket :LifecycleConfigurationRequest
+(defmethod put-bucket
+  :LifecycleConfigurationRequest
   [{:keys
     [^String Bucket
      ^BucketLifecycleConfiguration BucketLifecycleConfiguration
@@ -442,7 +452,8 @@
         (.bucket Bucket)
         (.lifecycleConfiguration BucketLifecycleConfiguration)))))
 
-(defmethod put-bucket :LoggingRequest
+(defmethod put-bucket
+  :LoggingRequest
   [{:keys
     [^String Bucket
      ^BucketLoggingStatus BucketLoggingStatus
@@ -459,7 +470,8 @@
         (.bucket Bucket)
         (.bucketLoggingStatus BucketLoggingStatus)))))
 
-(defmethod put-bucket :MetricsConfigurationRequest
+(defmethod put-bucket
+  :MetricsConfigurationRequest
   [{:keys
     [^String Bucket
      ^MetricsConfiguration MetricsConfiguration
@@ -476,7 +488,8 @@
         (.bucket Bucket)
         (.metricsConfiguration MetricsConfiguration)))))
 
-(defmethod put-bucket :NotificationRequest
+(defmethod put-bucket
+  :NotificationRequest
   [{:keys
     [^String Bucket
      ^NotificationConfigurationDeprecated NotificationConfigurationDeprecated
@@ -495,7 +508,8 @@
         (.contentMD5 ContentMd5)
         (.notificationConfiguration NotificationConfigurationDeprecated)))))
 
-(defmethod put-bucket :NotificationConfigurationRequest
+(defmethod put-bucket
+  :NotificationConfigurationRequest
   [{:keys
     [^String Bucket
      ^NotificationConfiguration NotificationConfiguration
@@ -512,7 +526,8 @@
         (.bucket Bucket)
         (.notificationConfiguration NotificationConfiguration)))))
 
-(defmethod put-bucket :PolicyRequest
+(defmethod put-bucket
+  PolicyRequest
   [{:keys
     [^String Bucket
      ^String Policy
@@ -531,7 +546,8 @@
         (.policy Policy)
         (.contentMD5 ContentMd5)))))
 
-(defmethod put-bucket :ReplicationRequest
+(defmethod put-bucket
+  :ReplicationRequest
   [{:keys
     [^String Bucket
      ^ReplicationConfiguration ReplicationConfiguration
@@ -550,7 +566,8 @@
         (.replicationConfiguration ReplicationConfiguration)
         (.contentMD5 ContentMd5)))))
 
-(defmethod put-bucket :PaymentRequest
+(defmethod put-bucket
+  :PaymentRequest
   [{:keys
     [^String Bucket
      ^RequestPaymentConfiguration RequestPaymentConfiguration
@@ -569,7 +586,8 @@
         (.requestPaymentConfiguration RequestPaymentConfiguration)
         (.contentMD5 ContentMd5)))))
 
-(defmethod put-bucket :TaggingRequest
+(defmethod put-bucket
+  :TaggingRequest
   [{:keys
     [^String Bucket
      ^Tagging Tagging
@@ -588,7 +606,8 @@
         (.tagging Tagging)
         (.contentMD5 ContentMd5)))))
 
-(defmethod put-bucket :VersioningRequest
+(defmethod put-bucket
+  :VersioningRequest
   [{:keys
     [^String Bucket
      ^VersioningConfiguration VersioningConfiguration
@@ -609,7 +628,8 @@
         (.mfa Mfa)
         (.contentMD5 ContentMd5)))))
 
-(defmethod put-bucket :WebsiteRequest
+(defmethod put-bucket
+  :WebsiteRequest
   [{:keys
     [^String Bucket
      ^WebsiteConfiguration WebsiteConfiguration
