@@ -22,7 +22,7 @@
       PutBucketCorsRequest
       CORSConfiguration
       MetadataDirective
-      ServerSideEncryption)
+      ServerSideEncryption PutBucketInventoryConfigurationRequest InventoryConfiguration PutBucketLifecycleConfigurationRequest BucketLifecycleConfiguration PutBucketLoggingRequest BucketLoggingStatus)
     (software.amazon.awssdk.auth.credentials
       ProfileCredentialsProvider)
     (software.amazon.awssdk.core.async
@@ -101,6 +101,8 @@
      ^Instant CopySourceIfModifiedSince
      ^Instant CopySourceIfUnmodifiedSince
      ^String CopySourceSseCustomerAlgorithm
+     ^String CopySourceSseCustomerKey
+     ^String CopySourceSseCustomerKeyMd5
      ^String GrantWriteAcp
      ^String GrantReadAcp
      ^String GrantRead
@@ -114,6 +116,11 @@
      ^MetadataDirective MetadataDirective
      ^ServerSideEncryption ServerSideEncryption
      ^String SseCustomerKey
+     ^String SseKmsKeyId
+     ^String StorageClass
+     ^String Tagging
+     ^String TaggingDirective
+     ^String WebsiteRedirectionLocation
      ^String ContentType
      ^ObjectCannedACL Acl
      ^String RequestPayer
@@ -129,6 +136,8 @@
         (.copySource CopySource)
         (.copySourceIfMatch CopySourceIfMatch)
         (.copySourceSSECustomerAlgorithm CopySourceSseCustomerAlgorithm)
+        (.copySourceSSECustomerKey CopySourceSseCustomerKey)
+        (.copySourceSSECustomerKeyMD5 CopySourceSseCustomerKeyMd5)
         (.copySourceIfModifiedSince CopySourceIfModifiedSince)
         (.copySourceIfNoneMatch CopySourceIfNoneMatch)
         (.copySourceIfUnmodifiedSince CopySourceIfUnmodifiedSince)
@@ -147,7 +156,11 @@
         (.metadataDirective MetadataDirective)
         (.serverSideEncryption ServerSideEncryption)
         (.sseCustomerKey SseCustomerKey)
-        ;;TODO add remaining method calls + rename keys below to be  more descriptive
+        (.ssekmsKeyId SseKmsKeyId)
+        (.storageClass StorageClass)
+        (.tagging Tagging)
+        (.taggingDirective TaggingDirective)
+        (.websiteRedirectLocation WebsiteRedirectionLocation)
         (.key Key)
         (.bucket Bucket)
         (.requestPayer RequestPayer)))))
@@ -365,4 +378,72 @@
         (.contentMD5 ContentMd5)
         (.corsConfiguration CorsConfiguration)))))
 
+(defmethod put-bucket :InventoryConfigurationRequest
+  [{:keys
+    [^String Bucket
+     ^String Id
+     ^InventoryConfiguration InventoryConfiguration
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putBucketCors
+    (client Profile)
+    (.build
+      (->
+        (PutBucketInventoryConfigurationRequest/builder)
+        (.bucket Bucket)
+        (.id Id)
+        (.inventoryConfiguration InventoryConfiguration)))))
 
+(defmethod put-bucket :LifecycleConfigurationRequest
+  [{:keys
+    [^String Bucket
+     ^BucketLifecycleConfiguration LifecycleConfiguration
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putBucketCors
+    (client Profile)
+    (.build
+      (->
+        (PutBucketLifecycleConfigurationRequest/builder)
+        (.bucket Bucket)
+        (.lifecycleConfiguration LifecycleConfiguration)))))
+
+(defmethod put-bucket :LoggingRequest
+  [{:keys
+    [^String Bucket
+     ^BucketLoggingStatus BucketLoggingStatus
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putBucketCors
+    (client Profile)
+    (.build
+      (->
+        (PutBucketLoggingRequest/builder)
+        (.bucket Bucket)
+        (.bucketLoggingStatus BucketLoggingStatus)))))
+
+(defmethod put-bucket :MetricsRequest
+  [{:keys
+    [^String Bucket
+     ^BucketLoggingStatus BucketLoggingStatus
+     ^String RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.putBucketCors
+    (client Profile)
+    (.build
+      (->
+        (PutBucketLoggingRequest/builder)
+        (.bucket Bucket)
+        (.bucketLoggingStatus BucketLoggingStatus)))))
