@@ -62,7 +62,8 @@
     (java.time
       Instant)
     (java.io
-      File)))
+      File)
+    (java.util.concurrent CompletableFuture)))
 
 (defmulti put-bucket :type)
 (defmulti put-object :type)
@@ -87,7 +88,7 @@
          (.credentialsProvider
            (creds name))))))
 
-(defmethod multipart-upload
+(defmethod ^CompletableFuture multipart-upload
   :AbortRequest
   [{:keys
         [^String Bucket
@@ -99,19 +100,17 @@
         {^RequestPayer RequesterPayer (RequestPayer/REQUESTER)
          ^String Profile              "default"}
     :as args}]
-  {:in args
-   :out
-       (.abortMultipartUpload
-         (client Profile)
-         (.build
-           (->
-             (AbortMultipartUploadRequest/builder)
-             (.bucket Bucket)
-             (.key Key)
-             (.uploadId UploadId)
-             (.requestPayer RequesterPayer))))})
+  (.abortMultipartUpload
+    (client Profile)
+    (.build
+      (->
+        (AbortMultipartUploadRequest/builder)
+        (.bucket Bucket)
+        (.key Key)
+        (.uploadId UploadId)
+        (.requestPayer RequesterPayer)))))
 
-(defmethod multipart-upload
+(defmethod ^CompletableFuture multipart-upload
   :CompleteRequest
   [{:keys
     [^String Bucket
@@ -132,7 +131,7 @@
         (.uploadId UploadId)
         (.requestPayer RequestPayer)))))
 
-(defmethod copy-object
+(defmethod ^CompletableFuture copy-object
   :Request
   [{:keys
     [^String CopySource
@@ -207,7 +206,7 @@
         (.bucket Bucket)
         (.requestPayer RequestPayer)))))
 
-(defmethod put-object
+(defmethod ^CompletableFuture put-object
   :Request
   [{:keys
     [^File FromFile
@@ -264,7 +263,7 @@
         (.ssekmsKeyId SseKmsKeyId)))
     (AsyncRequestBody/fromFile FromFile)))
 
-(defmethod put-object
+(defmethod ^CompletableFuture put-object
   :AclRequest
   [{:keys
     [^String Bucket
@@ -295,7 +294,7 @@
         (.grantFullControl GrantFullControl)
         (.contentMD5 ContentMd5)))))
 
-(defmethod put-object
+(defmethod ^CompletableFuture put-object
   :TaggingRequest
   [{:keys
     [^String Bucket
@@ -319,7 +318,7 @@
         (.contentMD5 ContentMd5)
         (.versionId VersionId)))))
 
-(defmethod restore-object
+(defmethod ^CompletableFuture restore-object
   :Request
   [{:keys
     [^String Bucket
@@ -343,7 +342,7 @@
         (.key Key)
         (.restoreRequest RestoreRequest)))))
 
-(defmethod upload-part
+(defmethod ^CompletableFuture upload-part
   :Request
   [{:keys
     [^String Bucket
@@ -378,7 +377,7 @@
         (.sseCustomerKeyMD5 SseCustomerKeyMd5)))
     (AsyncRequestBody/fromFile FromFile)))
 
-(defmethod upload-part
+(defmethod ^CompletableFuture upload-part
   :CopyRequest
   [{:keys
     [^String Bucket
@@ -425,7 +424,7 @@
         (.sseCustomerKeyMD5 SseCustomerKeyMd5)
         (.requestPayer RequestPayer)))))
 
-(defmethod put-bucket
+(defmethod ^CompletableFuture put-bucket
   :AccelerateConfigurationRequest
   [{:keys
     [^String Bucket
@@ -441,7 +440,7 @@
         (.bucket Bucket)
         (.accelerateConfiguration AccelerateConfiguration)))))
 
-(defmethod put-bucket
+(defmethod ^CompletableFuture put-bucket
   :AclRequest
   [{:keys
     [^String Bucket
@@ -471,7 +470,7 @@
         (.grantWrite GrantWrite)
         (.grantWriteACP GrantWriteAcp)))))
 
-(defmethod put-bucket
+(defmethod ^CompletableFuture put-bucket
   :AnalyticsConfigurationRequest
   [{:keys
     [^String Bucket
@@ -489,7 +488,7 @@
         (.analyticsConfiguration AnalyticsConfiguration)
         (.id Id)))))
 
-(defmethod put-bucket
+(defmethod ^CompletableFuture put-bucket
   :CorsRequest
   [{:keys
     [^String Bucket
@@ -507,7 +506,7 @@
         (.contentMD5 ContentMd5)
         (.corsConfiguration CorsConfiguration)))))
 
-(defmethod put-bucket
+(defmethod ^CompletableFuture put-bucket
   :InventoryConfigurationRequest
   [{:keys
     [^String Bucket
@@ -525,7 +524,7 @@
         (.id Id)
         (.inventoryConfiguration InventoryConfiguration)))))
 
-(defmethod put-bucket
+(defmethod ^CompletableFuture put-bucket
   :LifecycleRequest
   [{:keys
     [^String Bucket
@@ -543,7 +542,7 @@
         (.lifecycleConfiguration LifecycleConfiguration)
         (.contentMD5 ContentMd5)))))
 
-(defmethod put-bucket
+(defmethod ^CompletableFuture put-bucket
   :LifecycleConfigurationRequest
   [{:keys
     [^String Bucket
@@ -559,7 +558,7 @@
         (.bucket Bucket)
         (.lifecycleConfiguration BucketLifecycleConfiguration)))))
 
-(defmethod put-bucket
+(defmethod ^CompletableFuture put-bucket
   :LoggingRequest
   [{:keys
     [^String Bucket
@@ -575,7 +574,7 @@
         (.bucket Bucket)
         (.bucketLoggingStatus BucketLoggingStatus)))))
 
-(defmethod put-bucket
+(defmethod ^CompletableFuture put-bucket
   :MetricsConfigurationRequest
   [{:keys
     [^String Bucket
@@ -591,7 +590,7 @@
         (.bucket Bucket)
         (.metricsConfiguration MetricsConfiguration)))))
 
-(defmethod put-bucket
+(defmethod ^CompletableFuture put-bucket
   :NotificationRequest
   [{:keys
     [^String Bucket
@@ -609,7 +608,7 @@
         (.contentMD5 ContentMd5)
         (.notificationConfiguration NotificationConfigurationDeprecated)))))
 
-(defmethod put-bucket
+(defmethod ^CompletableFuture put-bucket
   :NotificationConfigurationRequest
   [{:keys
     [^String Bucket
@@ -625,7 +624,7 @@
         (.bucket Bucket)
         (.notificationConfiguration NotificationConfiguration)))))
 
-(defmethod put-bucket
+(defmethod ^CompletableFuture put-bucket
   :PolicyRequest
   [{:keys
     [^String Bucket
@@ -643,7 +642,7 @@
         (.policy Policy)
         (.contentMD5 ContentMd5)))))
 
-(defmethod put-bucket
+(defmethod ^CompletableFuture put-bucket
   :ReplicationRequest
   [{:keys
     [^String Bucket
@@ -661,7 +660,7 @@
         (.replicationConfiguration ReplicationConfiguration)
         (.contentMD5 ContentMd5)))))
 
-(defmethod put-bucket
+(defmethod ^CompletableFuture put-bucket
   :PaymentRequest
   [{:keys
     [^String Bucket
@@ -679,7 +678,7 @@
         (.requestPaymentConfiguration RequestPaymentConfiguration)
         (.contentMD5 ContentMd5)))))
 
-(defmethod put-bucket
+(defmethod ^CompletableFuture put-bucket
   :TaggingRequest
   [{:keys
     [^String Bucket
@@ -697,7 +696,7 @@
         (.tagging Tagging)
         (.contentMD5 ContentMd5)))))
 
-(defmethod put-bucket
+(defmethod ^CompletableFuture put-bucket
   :VersioningRequest
   [{:keys
     [^String Bucket
@@ -717,7 +716,7 @@
         (.mfa Mfa)
         (.contentMD5 ContentMd5)))))
 
-(defmethod put-bucket
+(defmethod ^CompletableFuture put-bucket
   :WebsiteRequest
   [{:keys
     [^String Bucket
