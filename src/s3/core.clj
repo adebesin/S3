@@ -1,8 +1,8 @@
 (ns s3.core
   (:require
-            [clojure.spec.test.alpha :as stest]
-            [clojure.spec.alpha :as s]
-            [s3.core.specs])
+    [clojure.spec.test.alpha :as stest]
+    [clojure.spec.alpha :as s]
+    [s3.core.specs])
   (:import
     (software.amazon.awssdk.services.s3
       S3AsyncClient)
@@ -50,7 +50,7 @@
       PutBucketVersioningRequest
       VersioningConfiguration
       PutBucketWebsiteRequest
-      WebsiteConfiguration)
+      WebsiteConfiguration RestoreObjectRequest RestoreRequest UploadPartRequest UploadPartCopyRequest)
     (software.amazon.awssdk.auth.credentials
       ProfileCredentialsProvider)
     (software.amazon.awssdk.core.async
@@ -251,7 +251,7 @@
     (AsyncRequestBody/fromFile FromFile)))
 
 (defmethod put-object
-  AclRequest
+  :AclRequest
   [{:keys
     [^String Bucket
      ^ObjectCannedACL Acl
@@ -274,6 +274,7 @@
         (.key Key)
         (.bucket Bucket)
         (.acl Acl)
+        (.requestPayer RequestPayer)
         (.grantWriteACP GrantWriteAcp)
         (.grantWrite GrantWrite)
         (.grantReadACP GrantReadAcp)
@@ -304,16 +305,117 @@
         (.contentMD5 ContentMd5)
         (.versionId VersionId)))))
 
+(defn restore-object
+  [{:keys
+    [^String Bucket
+     ^String Key
+     ^String VersionId
+     ^String RequestPayer
+     ^RestoreRequest RestoreRequest
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.restoreObject
+    (client Profile)
+    (.build
+      (->
+        (RestoreObjectRequest/builder)
+        (.key Key)
+        (.bucket Bucket)
+        (.versionId VersionId)
+        (.requestPayer RequestPayer)
+        (.key Key)
+        (.restoreRequest RestoreRequest)))))
+
+(defn upload-part
+  [{:keys
+    [^String Bucket
+     ^String Key
+     ^File FromFile
+     ^String ContentMd5
+     ^String RequestPayer
+     ^String SseCustomerKey
+     ^String UploadId
+     ^Integer PartNumber
+     ^Long ContentLength
+     ^String SseCustomerAlgorithm
+     ^String SseCustomerKeyMd5
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.uploadPart
+    (client Profile)
+    (.build
+      (->
+        (UploadPartRequest/builder)
+        (.key Key)
+        (.bucket Bucket)
+        (.requestPayer RequestPayer)
+        (.contentMD5 ContentMd5)
+        (.sseCustomerKey SseCustomerKey)
+        (.uploadId UploadId)
+        (.contentLength ContentLength)
+        (.partNumber PartNumber)
+        (.sseCustomerAlgorithm SseCustomerAlgorithm)
+        (.sseCustomerKeyMD5 SseCustomerKeyMd5)))
+    (AsyncRequestBody/fromFile FromFile)))
+
+(defn upload-part-copy
+  [{:keys
+    [^String Bucket
+     ^String Key
+     ^String RequestPayer
+     ^String CopySource
+     ^String SseCustomerKey
+     ^String CopySourceRange
+     ^Instant CopySourceIfModifiedSince
+     ^Instant CopySourceIfUnmodifiedSince
+     ^String CopySourceSseCustomerAlgorithm
+     ^String CopySourceSseCustomerKey
+     ^String CopySourceSseCustomerKeyMd5
+     ^String CopySourceIfMatch
+     ^String UploadId
+     ^String CopySourceIfNoneMatch
+     ^Integer PartNumber
+     ^String SseCustomerAlgorithm
+     ^String SseCustomerKeyMd5
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.uploadPartCopy
+    (client Profile)
+    (.build
+      (->
+        (UploadPartCopyRequest/builder)
+        (.key Key)
+        (.bucket Bucket)
+        (.copySource CopySource)
+        (.copySourceIfMatch CopySourceIfMatch)
+        (.copySourceSSECustomerAlgorithm CopySourceSseCustomerAlgorithm)
+        (.copySourceSSECustomerKey CopySourceSseCustomerKey)
+        (.copySourceSSECustomerKeyMD5 CopySourceSseCustomerKeyMd5)
+        (.copySourceIfModifiedSince CopySourceIfModifiedSince)
+        (.copySourceIfNoneMatch CopySourceIfNoneMatch)
+        (.copySourceIfUnmodifiedSince CopySourceIfUnmodifiedSince)
+        (.copySourceRange CopySourceRange)
+        (.sseCustomerKey SseCustomerKey)
+        (.uploadId UploadId)
+        (.partNumber PartNumber)
+        (.sseCustomerAlgorithm SseCustomerAlgorithm)
+        (.sseCustomerKeyMD5 SseCustomerKeyMd5)
+        (.requestPayer RequestPayer)))))
+
 (defmethod put-bucket
   :AccelerateConfigurationRequest
   [{:keys
     [^String Bucket
      ^AccelerateConfiguration AccelerateConfiguration
-     ^String RequestPayer
      ^String Profile]
     :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
+    {^String Profile "default"}}]
   (.putBucketAccelerateConfiguration
     (client Profile)
     (.build
@@ -334,11 +436,9 @@
      ^String GrantReadAcp
      ^String GrantWrite
      ^String GrantWriteAcp
-     ^String RequestPayer
      ^String Profile]
     :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
+    {^String Profile "default"}}]
   (.putBucketAcl
     (client Profile)
     (.build
@@ -360,11 +460,9 @@
     [^String Bucket
      ^AnalyticsConfiguration AnalyticsConfiguration
      ^String Id
-     ^String RequestPayer
      ^String Profile]
     :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
+    {^String Profile "default"}}]
   (.putBucketAnalyticsConfiguration
     (client Profile)
     (.build
@@ -380,11 +478,9 @@
     [^String Bucket
      ^CORSConfiguration CorsConfiguration
      ^String ContentMd5
-     ^String RequestPayer
      ^String Profile]
     :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
+    {^String Profile "default"}}]
   (.putBucketCors
     (client Profile)
     (.build
@@ -400,11 +496,9 @@
     [^String Bucket
      ^String Id
      ^InventoryConfiguration InventoryConfiguration
-     ^String RequestPayer
      ^String Profile]
     :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
+    {^String Profile "default"}}]
   (.putBucketInventoryConfiguration
     (client Profile)
     (.build
@@ -420,11 +514,9 @@
     [^String Bucket
      ^LifecycleConfiguration LifecycleConfiguration
      ^String ContentMd5
-     ^String RequestPayer
      ^String Profile]
     :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
+    {^String Profile "default"}}]
   (.putBucketLifecycle
     (client Profile)
     (.build
@@ -439,11 +531,9 @@
   [{:keys
     [^String Bucket
      ^BucketLifecycleConfiguration BucketLifecycleConfiguration
-     ^String RequestPayer
      ^String Profile]
     :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
+    {^String Profile "default"}}]
   (.putBucketLifecycleConfiguration
     (client Profile)
     (.build
@@ -457,11 +547,9 @@
   [{:keys
     [^String Bucket
      ^BucketLoggingStatus BucketLoggingStatus
-     ^String RequestPayer
      ^String Profile]
     :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
+    {^String Profile "default"}}]
   (.putBucketLogging
     (client Profile)
     (.build
@@ -475,11 +563,9 @@
   [{:keys
     [^String Bucket
      ^MetricsConfiguration MetricsConfiguration
-     ^String RequestPayer
      ^String Profile]
     :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
+    {^String Profile "default"}}]
   (.putBucketMetricsConfiguration
     (client Profile)
     (.build
@@ -494,11 +580,9 @@
     [^String Bucket
      ^NotificationConfigurationDeprecated NotificationConfigurationDeprecated
      ^String ContentMd5
-     ^String RequestPayer
      ^String Profile]
     :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
+    {^String Profile "default"}}]
   (.putBucketNotification
     (client Profile)
     (.build
@@ -513,11 +597,9 @@
   [{:keys
     [^String Bucket
      ^NotificationConfiguration NotificationConfiguration
-     ^String RequestPayer
      ^String Profile]
     :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
+    {^String Profile "default"}}]
   (.putBucketNotificationConfiguration
     (client Profile)
     (.build
@@ -527,16 +609,14 @@
         (.notificationConfiguration NotificationConfiguration)))))
 
 (defmethod put-bucket
-  PolicyRequest
+  :PolicyRequest
   [{:keys
     [^String Bucket
      ^String Policy
      ^String ContentMd5
-     ^String RequestPayer
      ^String Profile]
     :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
+    {^String Profile "default"}}]
   (.putBucketPolicy
     (client Profile)
     (.build
@@ -552,11 +632,9 @@
     [^String Bucket
      ^ReplicationConfiguration ReplicationConfiguration
      ^String ContentMd5
-     ^String RequestPayer
      ^String Profile]
     :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
+    {^String Profile "default"}}]
   (.putBucketReplication
     (client Profile)
     (.build
@@ -572,11 +650,9 @@
     [^String Bucket
      ^RequestPaymentConfiguration RequestPaymentConfiguration
      ^String ContentMd5
-     ^String RequestPayer
      ^String Profile]
     :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
+    {^String Profile "default"}}]
   (.putBucketRequestPayment
     (client Profile)
     (.build
@@ -592,11 +668,9 @@
     [^String Bucket
      ^Tagging Tagging
      ^String ContentMd5
-     ^String RequestPayer
      ^String Profile]
     :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
+    {^String Profile "default"}}]
   (.putBucketTagging
     (client Profile)
     (.build
@@ -613,11 +687,9 @@
      ^VersioningConfiguration VersioningConfiguration
      ^String ContentMd5
      ^String Mfa
-     ^String RequestPayer
      ^String Profile]
     :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
+    {^String Profile "default"}}]
   (.putBucketVersioning
     (client Profile)
     (.build
@@ -634,11 +706,9 @@
     [^String Bucket
      ^WebsiteConfiguration WebsiteConfiguration
      ^String ContentMd5
-     ^String RequestPayer
      ^String Profile]
     :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
+    {^String Profile "default"}}]
   (.putBucketWebsite
     (client Profile)
     (.build
