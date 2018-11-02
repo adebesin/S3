@@ -64,12 +64,12 @@
     (java.io
       File)))
 
-(defmulti put-bucket :Type)
-(defmulti put-object :Type)
-(defmulti copy-object :Type)
-(defmulti upload-part :Type)
-(defmulti restore-object :Type)
-(defmulti multipart-upload :Type)
+(defmulti put-bucket :type)
+(defmulti put-object :type)
+(defmulti copy-object :type)
+(defmulti upload-part :type)
+(defmulti restore-object :type)
+(defmulti multipart-upload :type)
 
 (defn- creds
   [^String name]
@@ -90,23 +90,26 @@
 (defmethod multipart-upload
   :AbortRequest
   [{:keys
-    [^String Bucket
-     ^String Key
-     ^String UploadId
-     ^String RequesterPayer
-     ^String Profile]
+        [^String Bucket
+         ^String Key
+         ^String UploadId
+         ^RequestPayer RequesterPayer
+         ^String Profile]
     :or
-    {^RequestPayer RequesterPayer (RequestPayer/REQUESTER)
-     ^String Profile              "default"}}]
-  (.abortMultipartUpload
-    (client Profile)
-    (.build
-      (->
-        (AbortMultipartUploadRequest/builder)
-        (.bucket Bucket)
-        (.key Key)
-        (.uploadId UploadId)
-        (.requestPayer RequesterPayer)))))
+        {^RequestPayer RequesterPayer (RequestPayer/REQUESTER)
+         ^String Profile              "default"}
+    :as args}]
+  {:in args
+   :out
+       (.abortMultipartUpload
+         (client Profile)
+         (.build
+           (->
+             (AbortMultipartUploadRequest/builder)
+             (.bucket Bucket)
+             (.key Key)
+             (.uploadId UploadId)
+             (.requestPayer RequesterPayer))))})
 
 (defmethod multipart-upload
   :CompleteRequest
