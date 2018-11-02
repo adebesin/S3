@@ -50,7 +50,11 @@
       PutBucketVersioningRequest
       VersioningConfiguration
       PutBucketWebsiteRequest
-      WebsiteConfiguration RestoreObjectRequest RestoreRequest UploadPartRequest UploadPartCopyRequest)
+      WebsiteConfiguration
+      RestoreObjectRequest
+      RestoreRequest
+      UploadPartRequest
+      UploadPartCopyRequest)
     (software.amazon.awssdk.auth.credentials
       ProfileCredentialsProvider)
     (software.amazon.awssdk.core.async
@@ -62,6 +66,10 @@
 
 (defmulti put-bucket :Type)
 (defmulti put-object :Type)
+(defmulti copy-object :Type)
+(defmulti upload-part :Type)
+(defmulti restore-object :Type)
+(defmulti multipart-upload :Type)
 
 (defn- creds
   [^String name]
@@ -79,7 +87,8 @@
          (.credentialsProvider
            (creds name))))))
 
-(defn abort-multipart-upload
+(defmethod multipart-upload
+  :AbortRequest
   [{:keys
     [^String Bucket
      ^String Key
@@ -99,7 +108,8 @@
         (.uploadId UploadId)
         (.requestPayer RequesterPayer)))))
 
-(defn complete-multipart-upload
+(defmethod multipart-upload
+  :CompleteRequest
   [{:keys
     [^String Bucket
      ^String Key
@@ -119,7 +129,8 @@
         (.uploadId UploadId)
         (.requestPayer RequestPayer)))))
 
-(defn copy-object
+(defmethod copy-object
+  :Request
   [{:keys
     [^String CopySource
      ^String Bucket
@@ -305,7 +316,8 @@
         (.contentMD5 ContentMd5)
         (.versionId VersionId)))))
 
-(defn restore-object
+(defmethod restore-object
+  :Request
   [{:keys
     [^String Bucket
      ^String Key
@@ -328,7 +340,8 @@
         (.key Key)
         (.restoreRequest RestoreRequest)))))
 
-(defn upload-part
+(defmethod upload-part
+  :Request
   [{:keys
     [^String Bucket
      ^String Key
@@ -362,7 +375,8 @@
         (.sseCustomerKeyMD5 SseCustomerKeyMd5)))
     (AsyncRequestBody/fromFile FromFile)))
 
-(defn upload-part-copy
+(defmethod upload-part
+  :CopyRequest
   [{:keys
     [^String Bucket
      ^String Key
