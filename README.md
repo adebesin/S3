@@ -11,8 +11,6 @@ A Clojure library for Amazon S3
    :Profile   "dev"
    :type      :AbortRequest})
 
-
-```clojure
 ;;  Complete multi part upload
 (multipart-upload
   {:Bucket    "images"
