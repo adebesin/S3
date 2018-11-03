@@ -1,11 +1,8 @@
 (ns s3.core
-  (:require
-    [clojure.spec.test.alpha :as stest]
-    [clojure.spec.alpha :as s]
-    [s3.core.specs])
   (:import
     (software.amazon.awssdk.services.s3
-      S3AsyncClient)
+      S3AsyncClient
+      DefaultS3AsyncClient)
     (software.amazon.awssdk.services.s3.model
       AbortMultipartUploadRequest
       CompleteMultipartUploadRequest
@@ -54,7 +51,19 @@
       RestoreObjectRequest
       RestoreRequest
       UploadPartRequest
-      UploadPartCopyRequest)
+      UploadPartCopyRequest
+      CreateBucketRequest
+      CreateBucketConfiguration
+      DeleteBucketRequest
+      DeleteBucketAnalyticsConfigurationRequest
+      DeleteBucketCorsRequest
+      DeleteBucketInventoryConfigurationRequest
+      DeleteBucketLifecycleRequest
+      DeleteBucketMetricsConfigurationRequest
+      DeleteBucketPolicyRequest
+      DeleteBucketReplicationRequest
+      DeleteBucketTaggingRequest
+      DeleteBucketWebsiteRequest)
     (software.amazon.awssdk.auth.credentials
       ProfileCredentialsProvider)
     (software.amazon.awssdk.core.async
@@ -63,7 +72,12 @@
       Instant)
     (java.io
       File)
-    (java.util.concurrent CompletableFuture)))
+    (java.util.concurrent
+      CompletableFuture))
+  (:require
+    [clojure.spec.test.alpha :as spec.test]
+    [clojure.spec.alpha :as spec.alpha]
+    [s3.core.specs :as core.specs]))
 
 (defmulti put-bucket :type)
 (defmulti put-object :type)
@@ -71,14 +85,16 @@
 (defmulti upload-part :type)
 (defmulti restore-object :type)
 (defmulti multipart-upload :type)
+(defmulti create-bucket :type)
+(defmulti delete-bucket :type)
 
-(defn- creds
+(defn- ^ProfileCredentialsProvider creds
   [^String name]
   (.build
     (-> (ProfileCredentialsProvider/builder)
         (.profileName name))))
 
-(defn- client
+(defn- ^DefaultS3AsyncClient client
   ([]
    (.build
      (S3AsyncClient/builder)))
@@ -102,6 +118,7 @@
     :as args}]
   (.abortMultipartUpload
     (client Profile)
+    ^AbortMultipartUploadRequest
     (.build
       (->
         (AbortMultipartUploadRequest/builder)
@@ -109,27 +126,6 @@
         (.key Key)
         (.uploadId UploadId)
         (.requestPayer RequesterPayer)))))
-
-(defmethod ^CompletableFuture multipart-upload
-  :CompleteRequest
-  [{:keys
-    [^String Bucket
-     ^String Key
-     ^String UploadId
-     ^String RequestPayer
-     ^String Profile]
-    :or
-    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
-     ^String Profile            "default"}}]
-  (.completeMultipartUpload
-    (client Profile)
-    (.build
-      (->
-        (CompleteMultipartUploadRequest/builder)
-        (.bucket Bucket)
-        (.key Key)
-        (.uploadId UploadId)
-        (.requestPayer RequestPayer)))))
 
 (defmethod ^CompletableFuture copy-object
   :Request
@@ -163,14 +159,15 @@
      ^String TaggingDirective
      ^String WebsiteRedirectionLocation
      ^String ContentType
-     ^ObjectCannedACL Acl
-     ^String RequestPayer
+     ^ObjectCannedACL ObjectCannedAcl
+     ^RequestPayer RequestPayer
      ^String Profile]
     :or
     {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
      ^String Profile            "default"}}]
   (.copyObject
     (client Profile)
+    ^CopyObjectRequest
     (.build
       (->
         (CopyObjectRequest/builder)
@@ -186,7 +183,7 @@
         (.grantReadACP GrantReadAcp)
         (.grantRead GrantRead)
         (.grantFullControl GrantFullControl)
-        (.acl Acl)
+        (.acl ObjectCannedAcl)
         (.cacheControl CacheControl)
         (.contentDisposition ContentDisposition)
         (.contentEncoding ContentEncoding)
@@ -205,6 +202,211 @@
         (.key Key)
         (.bucket Bucket)
         (.requestPayer RequestPayer)))))
+
+(defmethod ^CompletableFuture create-bucket
+  :Request
+  [{:keys
+    [^String Bucket
+     ^String GrantWriteAcp
+     ^String GrantReadAcp
+     ^String GrantRead
+     ^String GrantFullControl
+     ^CreateBucketConfiguration CreateBucketConfiguration
+     ^BucketCannedACL BucketCannedAcl
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.createBucket
+    (client Profile)
+    ^CreateBucketRequest
+    (.build
+      (->
+        (CreateBucketRequest/builder)
+        (.grantWriteACP GrantWriteAcp)
+        (.grantReadACP GrantReadAcp)
+        (.grantRead GrantRead)
+        (.grantFullControl GrantFullControl)
+        (.acl BucketCannedAcl)
+        (.createBucketConfiguration CreateBucketConfiguration)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture multipart-upload
+  :CompleteRequest
+  [{:keys
+    [^String Bucket
+     ^String Key
+     ^String UploadId
+     ^RequestPayer RequestPayer
+     ^String Profile]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.completeMultipartUpload
+    (client Profile)
+    ^CompleteMultipartUploadRequest
+    (.build
+      (->
+        (CompleteMultipartUploadRequest/builder)
+        (.bucket Bucket)
+        (.key Key)
+        (.uploadId UploadId)
+        (.requestPayer RequestPayer)))))
+
+(defmethod ^CompletableFuture delete-bucket
+  :Request
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.deleteBucket
+    (client Profile)
+    ^DeleteBucketRequest
+    (.build
+      (->
+        (DeleteBucketRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture delete-bucket
+  :AnalyticsConfigurationRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile
+     ^String Id]
+    :or
+    {^String Profile "default"}}]
+  (.deleteBucketAnalyticsConfiguration
+    (client Profile)
+    ^DeleteBucketAnalyticsConfigurationRequest
+    (.build
+      (->
+        (DeleteBucketAnalyticsConfigurationRequest/builder)
+        (.bucket Bucket)
+        (.id Id)))))
+
+(defmethod ^CompletableFuture delete-bucket
+  :CorsRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.deleteBucketCors
+    (client Profile)
+    ^DeleteBucketCorsRequest
+    (.build
+      (->
+        (DeleteBucketCorsRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture delete-bucket
+  :InventoryConfigurationRequest
+  [{:keys
+    [^String Bucket
+     ^String Id
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.deleteBucketInventoryConfiguration
+    (client Profile)
+    ^DeleteBucketInventoryConfigurationRequest
+    (.build
+      (->
+        (DeleteBucketInventoryConfigurationRequest/builder)
+        (.id Id)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture delete-bucket
+  :LifecycleRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.deleteBucketLifecycle
+    (client Profile)
+    ^DeleteBucketLifecycleRequest
+    (.build
+      (->
+        (DeleteBucketLifecycleRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture delete-bucket
+  :MetricsConfigurationRequest
+  [{:keys
+    [^String Bucket
+     ^String Id
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.deleteBucketMetricsConfiguration
+    (client Profile)
+    ^DeleteBucketMetricsConfigurationRequest
+    (.build
+      (->
+        (DeleteBucketMetricsConfigurationRequest/builder)
+        (.bucket Bucket)
+        (.id Id)))))
+
+(defmethod ^CompletableFuture delete-bucket
+  :PolicyRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.deleteBucketPolicy
+    (client Profile)
+    ^DeleteBucketPolicyRequest
+    (.build
+      (->
+        (DeleteBucketPolicyRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture delete-bucket
+  :ReplicationRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.deleteBucketReplication
+    (client Profile)
+    ^DeleteBucketReplicationRequest
+    (.build
+      (->
+        (DeleteBucketReplicationRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture delete-bucket
+  :TaggingRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.deleteBucketTagging
+    (client Profile)
+    ^DeleteBucketTaggingRequest
+    (.build
+      (->
+        (DeleteBucketTaggingRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture delete-bucket
+  :WebsiteRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.deleteBucketWebsite
+    (client Profile)
+    ^DeleteBucketWebsiteRequest
+    (.build
+      (->
+        (DeleteBucketWebsiteRequest/builder)
+        (.bucket Bucket)))))
 
 (defmethod ^CompletableFuture put-object
   :Request
@@ -230,13 +432,14 @@
      ^String ServerSideEncryption
      ^String SseKmsKeyId
      ^String Key
-     ^String RequestPayer
+     ^RequestPayer RequestPayer
      ^String Profile]
     :or
     {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
      ^String Profile            "default"}}]
   (.putObject
     (client Profile)
+    ^PutObjectRequest
     (.build
       (->
         (PutObjectRequest/builder)
@@ -263,7 +466,7 @@
         (.ssekmsKeyId SseKmsKeyId)))
     (AsyncRequestBody/fromFile FromFile)))
 
-(defmethod ^CompletableFuture put-object
+(defmethod put-object
   :AclRequest
   [{:keys
     [^String Bucket
@@ -274,13 +477,14 @@
      ^String GrantReadAcp
      ^String GrantFullControl
      ^String ContentMd5
-     ^String RequestPayer
+     ^RequestPayer RequestPayer
      ^String Profile]
     :or
     {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
      ^String Profile            "default"}}]
   (.putObjectAcl
     (client Profile)
+    ^PutObjectAclRequest
     (.build
       (->
         (PutObjectAclRequest/builder)
@@ -302,13 +506,14 @@
      ^Tagging Tagging
      ^String ContentMd5
      ^String VersionId
-     ^String RequestPayer
+     ^RequestPayer RequestPayer
      ^String Profile]
     :or
     {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
      ^String Profile            "default"}}]
   (.putObjectTagging
     (client Profile)
+    ^PutObjectTaggingRequest
     (.build
       (->
         (PutObjectTaggingRequest/builder)
@@ -324,7 +529,7 @@
     [^String Bucket
      ^String Key
      ^String VersionId
-     ^String RequestPayer
+     ^RequestPayer RequestPayer
      ^RestoreRequest RestoreRequest
      ^String Profile]
     :or
@@ -332,6 +537,7 @@
      ^String Profile            "default"}}]
   (.restoreObject
     (client Profile)
+    ^RestoreObjectRequest
     (.build
       (->
         (RestoreObjectRequest/builder)
@@ -349,7 +555,7 @@
      ^String Key
      ^File FromFile
      ^String ContentMd5
-     ^String RequestPayer
+     ^RequestPayer RequestPayer
      ^String SseCustomerKey
      ^String UploadId
      ^Integer PartNumber
@@ -362,6 +568,7 @@
      ^String Profile            "default"}}]
   (.uploadPart
     (client Profile)
+    ^UploadPartRequest
     (.build
       (->
         (UploadPartRequest/builder)
@@ -382,7 +589,7 @@
   [{:keys
     [^String Bucket
      ^String Key
-     ^String RequestPayer
+     ^RequestPayer RequestPayer
      ^String CopySource
      ^String SseCustomerKey
      ^String CopySourceRange
@@ -403,6 +610,7 @@
      ^String Profile            "default"}}]
   (.uploadPartCopy
     (client Profile)
+    ^UploadPartCopyRequest
     (.build
       (->
         (UploadPartCopyRequest/builder)
@@ -434,6 +642,7 @@
     {^String Profile "default"}}]
   (.putBucketAccelerateConfiguration
     (client Profile)
+    ^PutBucketAccelerateConfigurationRequest
     (.build
       (->
         (PutBucketAccelerateConfigurationRequest/builder)
@@ -457,6 +666,7 @@
     {^String Profile "default"}}]
   (.putBucketAcl
     (client Profile)
+    ^PutBucketAclRequest
     (.build
       (->
         (PutBucketAclRequest/builder)
@@ -481,6 +691,7 @@
     {^String Profile "default"}}]
   (.putBucketAnalyticsConfiguration
     (client Profile)
+    ^PutBucketAnalyticsConfigurationRequest
     (.build
       (->
         (PutBucketAnalyticsConfigurationRequest/builder)
@@ -499,6 +710,7 @@
     {^String Profile "default"}}]
   (.putBucketCors
     (client Profile)
+    ^PutBucketCorsRequest
     (.build
       (->
         (PutBucketCorsRequest/builder)
@@ -517,6 +729,7 @@
     {^String Profile "default"}}]
   (.putBucketInventoryConfiguration
     (client Profile)
+    ^PutBucketInventoryConfigurationRequest
     (.build
       (->
         (PutBucketInventoryConfigurationRequest/builder)
@@ -535,6 +748,7 @@
     {^String Profile "default"}}]
   (.putBucketLifecycle
     (client Profile)
+    ^PutBucketLifecycleRequest
     (.build
       (->
         (PutBucketLifecycleRequest/builder)
@@ -552,6 +766,7 @@
     {^String Profile "default"}}]
   (.putBucketLifecycleConfiguration
     (client Profile)
+    ^PutBucketLifecycleConfigurationRequest
     (.build
       (->
         (PutBucketLifecycleConfigurationRequest/builder)
@@ -568,6 +783,7 @@
     {^String Profile "default"}}]
   (.putBucketLogging
     (client Profile)
+    ^PutBucketLoggingRequest
     (.build
       (->
         (PutBucketLoggingRequest/builder)
@@ -584,6 +800,7 @@
     {^String Profile "default"}}]
   (.putBucketMetricsConfiguration
     (client Profile)
+    ^PutBucketMetricsConfigurationRequest
     (.build
       (->
         (PutBucketMetricsConfigurationRequest/builder)
@@ -601,6 +818,7 @@
     {^String Profile "default"}}]
   (.putBucketNotification
     (client Profile)
+    ^PutBucketNotificationRequest
     (.build
       (->
         (PutBucketNotificationRequest/builder)
@@ -618,6 +836,7 @@
     {^String Profile "default"}}]
   (.putBucketNotificationConfiguration
     (client Profile)
+    ^PutBucketNotificationConfigurationRequest
     (.build
       (->
         (PutBucketNotificationConfigurationRequest/builder)
@@ -635,6 +854,7 @@
     {^String Profile "default"}}]
   (.putBucketPolicy
     (client Profile)
+    ^PutBucketPolicyRequest
     (.build
       (->
         (PutBucketPolicyRequest/builder)
@@ -653,6 +873,7 @@
     {^String Profile "default"}}]
   (.putBucketReplication
     (client Profile)
+    ^PutBucketReplicationRequest
     (.build
       (->
         (PutBucketReplicationRequest/builder)
@@ -671,6 +892,7 @@
     {^String Profile "default"}}]
   (.putBucketRequestPayment
     (client Profile)
+    ^PutBucketRequestPaymentRequest
     (.build
       (->
         (PutBucketRequestPaymentRequest/builder)
@@ -689,6 +911,7 @@
     {^String Profile "default"}}]
   (.putBucketTagging
     (client Profile)
+    ^PutBucketTaggingRequest
     (.build
       (->
         (PutBucketTaggingRequest/builder)
@@ -708,6 +931,7 @@
     {^String Profile "default"}}]
   (.putBucketVersioning
     (client Profile)
+    ^PutBucketVersioningRequest
     (.build
       (->
         (PutBucketVersioningRequest/builder)
@@ -727,6 +951,7 @@
     {^String Profile "default"}}]
   (.putBucketWebsite
     (client Profile)
+    ^PutBucketWebsiteRequest
     (.build
       (->
         (PutBucketWebsiteRequest/builder)
