@@ -18,6 +18,5 @@ A Clojure library for Amazon S3
    :UploadId  "qwerty"
    :Profile   "dev"
    :type      :CompleteRequest})
-   
-   
-   
+ 
+ 
