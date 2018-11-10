@@ -1,19 +1,19 @@
 (ns s3.core.specs
-  (:require [clojure.spec.alpha :as spec.alpha])
+  (:require [clojure.spec.alpha :as s])
   (:import (software.amazon.awssdk.auth.credentials
              ProfileCredentialsProvider)
            (software.amazon.awssdk.services.s3.model
              RequestPayer)))
 
-(spec.alpha/def ::Bucket string?)
-(spec.alpha/def ::Key string?)
-(spec.alpha/def ::UploadId string?)
-(spec.alpha/def ::RequestPayer string?)                     ;TODO create RequestPayer instance check
-(spec.alpha/def ::Profile string?)
-(spec.alpha/def ::type keyword?)
+(s/def ::Bucket string?)
+(s/def ::Key string?)
+(s/def ::UploadId string?)
+(s/def ::RequestPayer string?)                     ;TODO create RequestPayer instance check
+(s/def ::Profile string?)
+(s/def ::type keyword?)
 
-(spec.alpha/def ::MultipartUploadAbortRequest
-  (spec.alpha/keys :req
+(s/def ::MultipartUploadAbortRequest
+  (s/keys :req
                    [::Bucket
                     ::Key
                     ::UploadId
@@ -21,11 +21,11 @@
                     ::Profile
                     ::type]))
 
-(spec.alpha/fdef s3.core/creds
+(s/fdef s3.core/creds
                  :args
-                 (spec.alpha/cat :name string?))
+                 (s/cat :name string?))
 
-(spec.alpha/fdef s3.core/multipart-upload
-                 :args (spec.alpha/cat :args ::MultipartUploadAbortRequest))
+(s/fdef s3.core/multipart-upload
+                 :args (s/cat :args ::MultipartUploadAbortRequest))
 
 

@@ -63,21 +63,22 @@
       DeleteBucketPolicyRequest
       DeleteBucketReplicationRequest
       DeleteBucketTaggingRequest
-      DeleteBucketWebsiteRequest)
+      DeleteBucketWebsiteRequest
+      DeleteObjectRequest
+      DeleteObjectTaggingRequest
+      DeleteObjectsRequest Delete
+      GetObjectRequest)
     (software.amazon.awssdk.auth.credentials
       ProfileCredentialsProvider)
     (software.amazon.awssdk.core.async
-      AsyncRequestBody)
+      AsyncRequestBody
+      AsyncResponseTransformer)
     (java.time
       Instant)
     (java.io
       File)
     (java.util.concurrent
-      CompletableFuture))
-  (:require
-    [clojure.spec.test.alpha :as spec.test]
-    [clojure.spec.alpha :as spec.alpha]
-    [s3.core.specs :as core.specs]))
+      CompletableFuture)))
 
 (defmulti put-bucket :type)
 (defmulti put-object :type)
@@ -87,6 +88,9 @@
 (defmulti multipart-upload :type)
 (defmulti create-bucket :type)
 (defmulti delete-bucket :type)
+(defmulti delete-object :type)
+(defmulti delete-objects :type)
+(defmulti get-object :type)
 
 (defn- ^ProfileCredentialsProvider creds
   [^String name]
@@ -407,6 +411,122 @@
       (->
         (DeleteBucketWebsiteRequest/builder)
         (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture delete-object
+  :Request
+  [{:keys
+    [^String Bucket
+     ^RequestPayer RequestPayer
+     ^String Key
+     ^String Mfa
+     ^String VersionId
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.deleteObject
+    (client Profile)
+    ^DeleteObjectRequest
+    (.build
+      (->
+        (DeleteObjectRequest/builder)
+        (.bucket Bucket)
+        (.requestPayer RequestPayer)
+        (.key Key)
+        (.mfa Mfa)
+        (.versionId VersionId)))))
+
+(defmethod ^CompletableFuture delete-object
+  :TaggingRequest
+  [{:keys
+    [^String Bucket
+     ^String Key
+     ^String VersionId
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.deleteObjectTagging
+    (client Profile)
+    ^DeleteObjectTaggingRequest
+    (.build
+      (->
+        (DeleteObjectTaggingRequest/builder)
+        (.bucket Bucket)
+        (.key Key)
+        (.versionId VersionId)))))
+
+(defmethod ^CompletableFuture delete-objects
+  :Request
+  [{:keys
+    [^String Bucket
+     ^String Mfa
+     ^Delete Delete
+     ^RequestPayer RequestPayer
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.deleteObjects
+    (client Profile)
+    ^DeleteObjectsRequest
+    (.build
+      (->
+        (DeleteObjectsRequest/builder)
+        (.bucket Bucket)
+        (.mfa Mfa)
+        (.requestPayer RequestPayer)
+        (.delete Delete)))))
+
+(defmethod ^CompletableFuture get-object
+  :Request
+  [{:keys
+    [^String Bucket
+     ^String Key
+     ^String VersionId
+     ^String SseCustomerKey
+     ^String IfMatch
+     ^Instant IfModifiedSince
+     ^Instant IfUnModifiedSince
+     ^String IfNoneMatch
+     ^String Range
+     ^String ResponseCacheControl
+     ^String ResponseContentDisposition
+     ^String ResponseContentEncoding
+     ^String ResponseContentLanguage
+     ^String ResponseContentType
+     ^String SseCustomerAlgorithm
+     ^String SseCustomerKeyMd5
+     ^Instant ResponseExpires
+     ^Integer PartNumber
+     ^File ToFile
+     ^RequestPayer RequestPayer
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getObject
+    (client Profile)
+    ^GetObjectRequest
+    (.build
+      (->
+        (GetObjectRequest/builder)
+        (.bucket Bucket)
+        (.key Key)
+        (.requestPayer RequestPayer)
+        (.versionId VersionId)
+        (.sseCustomerKey SseCustomerKey)
+        (.ifMatch IfMatch)
+        (.ifModifiedSince IfModifiedSince)
+        (.ifUnmodifiedSince IfUnModifiedSince)
+        (.ifNoneMatch IfNoneMatch)
+        (.partNumber PartNumber)
+        (.range Range)
+        (.responseCacheControl ResponseCacheControl)
+        (.responseContentDisposition ResponseContentDisposition)
+        (.responseContentEncoding ResponseContentEncoding)
+        (.responseContentLanguage ResponseContentLanguage)
+        (.responseContentType ResponseContentType)
+        (.responseExpires ResponseExpires)
+        (.sseCustomerAlgorithm SseCustomerAlgorithm)
+        (.sseCustomerKeyMD5 SseCustomerKeyMd5)))
+    (AsyncResponseTransformer/toFile ToFile)))
 
 (defmethod ^CompletableFuture put-object
   :Request
