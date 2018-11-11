@@ -67,7 +67,10 @@
       DeleteObjectRequest
       DeleteObjectTaggingRequest
       DeleteObjectsRequest Delete
-      GetObjectRequest GetObjectAclRequest GetObjectTaggingRequest GetObjectTorrentRequest)
+      GetObjectRequest
+      GetObjectAclRequest
+      GetObjectTaggingRequest
+      GetObjectTorrentRequest)
     (software.amazon.awssdk.auth.credentials
       ProfileCredentialsProvider)
     (software.amazon.awssdk.core.async
