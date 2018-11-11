@@ -67,7 +67,7 @@
       DeleteObjectRequest
       DeleteObjectTaggingRequest
       DeleteObjectsRequest Delete
-      GetObjectRequest)
+      GetObjectRequest GetObjectAclRequest GetObjectTaggingRequest GetObjectTorrentRequest)
     (software.amazon.awssdk.auth.credentials
       ProfileCredentialsProvider)
     (software.amazon.awssdk.core.async
@@ -526,6 +526,67 @@
         (.responseExpires ResponseExpires)
         (.sseCustomerAlgorithm SseCustomerAlgorithm)
         (.sseCustomerKeyMD5 SseCustomerKeyMd5)))
+    (AsyncResponseTransformer/toFile ToFile)))
+
+(defmethod ^CompletableFuture get-object
+  :AclRequest
+  [{:keys
+    [^String Bucket
+     ^String Key
+     ^String VersionId
+     ^RequestPayer RequestPayer
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getObjectAcl
+    (client Profile)
+    ^GetObjectAclRequest
+    (.build
+      (->
+        (GetObjectAclRequest/builder)
+        (.bucket Bucket)
+        (.key Key)
+        (.requestPayer RequestPayer)
+        (.versionId VersionId)))))
+
+(defmethod ^CompletableFuture get-object
+  :TaggingRequest
+  [{:keys
+    [^String Bucket
+     ^String Key
+     ^String VersionId
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getObjectTagging
+    (client Profile)
+    ^GetObjectTaggingRequest
+    (.build
+      (->
+        (GetObjectTaggingRequest/builder)
+        (.bucket Bucket)
+        (.key Key)
+        (.versionId VersionId)))))
+
+(defmethod ^CompletableFuture get-object
+  :TorrentRequest
+  [{:keys
+    [^String Bucket
+     ^String Key
+     ^RequestPayer RequestPayer
+     ^File ToFile
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getObjectTorrent
+    (client Profile)
+    ^GetObjectTorrentRequest
+    (.build
+      (->
+        (GetObjectTorrentRequest/builder)
+        (.bucket Bucket)
+        (.key Key)
+        (.requestPayer RequestPayer)))
     (AsyncResponseTransformer/toFile ToFile)))
 
 (defmethod ^CompletableFuture put-object
