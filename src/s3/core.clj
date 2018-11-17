@@ -70,7 +70,25 @@
       GetObjectRequest
       GetObjectAclRequest
       GetObjectTaggingRequest
-      GetObjectTorrentRequest)
+      GetObjectTorrentRequest
+      GetBucketAccelerateConfigurationRequest
+      GetBucketAclRequest
+      GetBucketAnalyticsConfigurationRequest
+      GetBucketCorsRequest
+      GetBucketInventoryConfigurationRequest
+      GetBucketLifecycleRequest
+      GetBucketLifecycleConfigurationRequest
+      GetBucketLocationRequest
+      GetBucketLoggingRequest
+      GetBucketMetricsConfigurationRequest
+      GetBucketNotificationRequest
+      GetBucketNotificationConfigurationRequest
+      GetBucketPolicyRequest
+      GetBucketReplicationRequest
+      GetBucketRequestPaymentRequest
+      GetBucketTaggingRequest
+      GetBucketVersioningRequest
+      GetBucketWebsiteRequest)
     (software.amazon.awssdk.auth.credentials
       ProfileCredentialsProvider)
     (software.amazon.awssdk.core.async
@@ -94,6 +112,7 @@
 (defmulti delete-object :type)
 (defmulti delete-objects :type)
 (defmulti get-object :type)
+(defmulti get-bucket :type)
 
 (defn- ^ProfileCredentialsProvider creds
   [^String name]
@@ -477,6 +496,312 @@
         (.mfa Mfa)
         (.requestPayer RequestPayer)
         (.delete Delete)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :AccelerateConfigurationRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketAccelerateConfiguration
+    (client Profile)
+    ^GetBucketAccelerateConfigurationRequest
+    (.build
+      (->
+        (GetBucketAccelerateConfigurationRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :AclRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketAcl
+    (client Profile)
+    ^GetBucketAclRequest
+    (.build
+      (->
+        (GetBucketAclRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :AnalyticsConfigurationRequest
+  [{:keys
+    [^String Bucket
+     ^String Id
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketAnalyticsConfiguration
+    (client Profile)
+    ^GetBucketAnalyticsConfigurationRequest
+    (.build
+      (->
+        (GetBucketAnalyticsConfigurationRequest/builder)
+        (.bucket Bucket)
+        (.id Id)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :CorsRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketCors
+    (client Profile)
+    ^GetBucketCorsRequest
+    (.build
+      (->
+        (GetBucketCorsRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :InventoryConfigurationRequest
+  [{:keys
+    [^String Bucket
+     ^String Id
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketInventoryConfiguration
+    (client Profile)
+    ^GetBucketInventoryConfigurationRequest
+    (.build
+      (->
+        (GetBucketInventoryConfigurationRequest/builder)
+        (.bucket Bucket)
+        (.id Id)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :LifecycleRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketLifecycle
+    (client Profile)
+    ^GetBucketLifecycleRequest
+    (.build
+      (->
+        (GetBucketLifecycleRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :LifecycleConfigurationRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketLifecycleConfiguration
+    (client Profile)
+    ^GetBucketLifecycleConfigurationRequest
+    (.build
+      (->
+        (GetBucketLifecycleConfigurationRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :LocationRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketLocation
+    (client Profile)
+    ^GetBucketLocationRequest
+    (.build
+      (->
+        (GetBucketLocationRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :LoggingRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketLogging
+    (client Profile)
+    ^GetBucketLoggingRequest
+    (.build
+      (->
+        (GetBucketLoggingRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :LoggingRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketLogging
+    (client Profile)
+    ^GetBucketLoggingRequest
+    (.build
+      (->
+        (GetBucketLoggingRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :MetricsConfigurationRequest
+  [{:keys
+    [^String Bucket
+     ^String Id
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketMetricsConfiguration
+    (client Profile)
+    ^GetBucketMetricsConfigurationRequest
+    (.build
+      (->
+        (GetBucketMetricsConfigurationRequest/builder)
+        (.bucket Bucket)
+        (.id Id)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :NotificationRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketNotification
+    (client Profile)
+    ^GetBucketNotificationRequest
+    (.build
+      (->
+        (GetBucketNotificationRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :NotificationConfigurationRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketNotificationConfiguration
+    (client Profile)
+    ^GetBucketNotificationConfigurationRequest
+    (.build
+      (->
+        (GetBucketNotificationConfigurationRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :PolicyRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketPolicy
+    (client Profile)
+    ^GetBucketPolicyRequest
+    (.build
+      (->
+        (GetBucketPolicyRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :ReplicationRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketReplication
+    (client Profile)
+    ^GetBucketReplicationRequest
+    (.build
+      (->
+        (GetBucketReplicationRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :ReplicationRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketReplication
+    (client Profile)
+    ^GetBucketReplicationRequest
+    (.build
+      (->
+        (GetBucketReplicationRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :PaymentRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketRequestPayment
+    (client Profile)
+    ^GetBucketRequestPaymentRequest
+    (.build
+      (->
+        (GetBucketRequestPaymentRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :TaggingRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketTagging
+    (client Profile)
+    ^GetBucketTaggingRequest
+    (.build
+      (->
+        (GetBucketTaggingRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :VersioningRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketVersioning
+    (client Profile)
+    ^GetBucketVersioningRequest
+    (.build
+      (->
+        (GetBucketVersioningRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture get-bucket
+  :WebsiteRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.getBucketWebsite
+    (client Profile)
+    ^GetBucketWebsiteRequest
+    (.build
+      (->
+        (GetBucketWebsiteRequest/builder)
+        (.bucket Bucket)))))
 
 (defmethod ^CompletableFuture get-object
   :Request
@@ -1142,5 +1467,6 @@
         (.bucket Bucket)
         (.websiteConfiguration WebsiteConfiguration)
         (.contentMD5 ContentMd5)))))
+
 
 
