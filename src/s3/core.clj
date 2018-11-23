@@ -88,7 +88,14 @@
       GetBucketRequestPaymentRequest
       GetBucketTaggingRequest
       GetBucketVersioningRequest
-      GetBucketWebsiteRequest)
+      GetBucketWebsiteRequest
+      HeadBucketRequest
+      HeadObjectRequest
+      ListBucketAnalyticsConfigurationsRequest
+      ListBucketInventoryConfigurationsRequest
+      ListBucketMetricsConfigurationsRequest
+      ListBucketsRequest
+      ListMultipartUploadsRequest)
     (software.amazon.awssdk.auth.credentials
       ProfileCredentialsProvider)
     (software.amazon.awssdk.core.async
@@ -113,6 +120,11 @@
 (defmulti delete-objects :type)
 (defmulti get-object :type)
 (defmulti get-bucket :type)
+(defmulti head-bucket :type)
+(defmulti head-object :type)
+(defmulti list-bucket :type)
+(defmulti list-buckets :type)
+(defmulti list-multipart-uploads :type)
 
 (defn- ^ProfileCredentialsProvider creds
   [^String name]
@@ -444,7 +456,8 @@
      ^String VersionId
      ^String Profile]
     :or
-    {^String Profile "default"}}]
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
   (.deleteObject
     (client Profile)
     ^DeleteObjectRequest
@@ -485,7 +498,8 @@
      ^RequestPayer RequestPayer
      ^String Profile]
     :or
-    {^String Profile "default"}}]
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
   (.deleteObjects
     (client Profile)
     ^DeleteObjectsRequest
@@ -803,6 +817,137 @@
         (GetBucketWebsiteRequest/builder)
         (.bucket Bucket)))))
 
+(defmethod ^CompletableFuture head-bucket
+  :Request
+  [{:keys
+    [^String Bucket
+     ^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.headBucket
+    (client Profile)
+    ^HeadBucketRequest
+    (.build
+      (->
+        (HeadBucketRequest/builder)
+        (.bucket Bucket)))))
+
+(defmethod ^CompletableFuture head-object
+  :Request
+  [{:keys
+    [^String Bucket
+     ^String Profile
+     ^String SseCustomerKeyMd5
+     ^String SseCustomerKey
+     ^String SseCustomerAlgorithm
+     ^String Range
+     ^String IfNoneMatch
+     ^Instant IfUnmodifiedSince
+     ^Instant IfModifiedSince
+     ^String IfMatch
+     ^Integer PartNumber
+     ^String VersionId
+     ^RequestPayer RequestPayer
+     ^String Key
+     ]
+    :or
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
+  (.headObject
+    (client Profile)
+    ^HeadObjectRequest
+    (.build
+      (->
+        (HeadObjectRequest/builder)
+        (.bucket Bucket)
+        (.sseCustomerKeyMD5 SseCustomerKeyMd5)
+        (.sseCustomerKey SseCustomerKey)
+        (.sseCustomerAlgorithm SseCustomerAlgorithm)
+        (.range Range)
+        (.partNumber PartNumber)
+        (.ifNoneMatch IfNoneMatch)
+        (.ifUnmodifiedSince IfUnmodifiedSince)
+        (.ifModifiedSince IfModifiedSince)
+        (.ifMatch IfMatch)
+        (.versionId VersionId)
+        (.requestPayer RequestPayer)
+        (.key Key)))))
+
+(defmethod ^CompletableFuture list-bucket
+  :AnalyticsConfigurationsRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile
+     ^String ContinuationToken]
+    :or
+    {^String Profile "default"}}]
+  (.listBucketAnalyticsConfigurations
+    (client Profile)
+    ^ListBucketAnalyticsConfigurationsRequest
+    (.build
+      (->
+        (ListBucketAnalyticsConfigurationsRequest/builder)
+        (.bucket Bucket)
+        (.continuationToken ContinuationToken)))))
+
+(defmethod ^CompletableFuture list-bucket
+  :InventoryConfigurationsRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile
+     ^String ContinuationToken]
+    :or
+    {^String Profile "default"}}]
+  (.listBucketInventoryConfigurations
+    (client Profile)
+    ^ListBucketInventoryConfigurationsRequest
+    (.build
+      (->
+        (ListBucketInventoryConfigurationsRequest/builder)
+        (.bucket Bucket)
+        (.continuationToken ContinuationToken)))))
+
+(defmethod ^CompletableFuture list-bucket
+  :MetricsConfigurationsRequest
+  [{:keys
+    [^String Bucket
+     ^String Profile
+     ^String ContinuationToken]
+    :or
+    {^String Profile "default"}}]
+  (.listBucketMetricsConfigurations
+    (client Profile)
+    ^ListBucketMetricsConfigurationsRequest
+    (.build
+      (->
+        (ListBucketMetricsConfigurationsRequest/builder)
+        (.bucket Bucket)
+        (.continuationToken ContinuationToken)))))
+
+(defmethod ^CompletableFuture list-buckets
+  :Request
+  [{:keys
+    [^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.listBuckets
+    (client Profile)
+    ^ListBucketsRequest
+    (.build
+      (ListBucketsRequest/builder))))
+
+(defmethod ^CompletableFuture list-multipart-uploads
+  :Request
+  [{:keys
+    [^String Profile]
+    :or
+    {^String Profile "default"}}]
+  (.listMultipartUploads
+    (client Profile)
+    ^ListMultipartUploadsRequest
+    (.build
+      (ListMultipartUploadsRequest/builder))))
+
 (defmethod ^CompletableFuture get-object
   :Request
   [{:keys
@@ -828,7 +973,8 @@
      ^RequestPayer RequestPayer
      ^String Profile]
     :or
-    {^String Profile "default"}}]
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
   (.getObject
     (client Profile)
     ^GetObjectRequest
@@ -865,7 +1011,8 @@
      ^RequestPayer RequestPayer
      ^String Profile]
     :or
-    {^String Profile "default"}}]
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
   (.getObjectAcl
     (client Profile)
     ^GetObjectAclRequest
@@ -905,7 +1052,8 @@
      ^File ToFile
      ^String Profile]
     :or
-    {^String Profile "default"}}]
+    {^RequestPayer RequestPayer (RequestPayer/REQUESTER)
+     ^String Profile            "default"}}]
   (.getObjectTorrent
     (client Profile)
     ^GetObjectTorrentRequest
