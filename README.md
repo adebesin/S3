@@ -1,6 +1,6 @@
 # s3
 
-A Clojure library for Amazon S3
+Clojure library for Amazon S3
 
 ```clojure
 ;;  Abort multi part upload
